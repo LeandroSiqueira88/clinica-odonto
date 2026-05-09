@@ -5,6 +5,7 @@ from routes.main import main
 from routes.pacientes import pacientes
 from routes.consultas import consultas
 from routes.dentistas import dentistas
+from routes.perfil import perfil
 
 app = Flask(__name__)
 app.secret_key = 'segredo_super'
@@ -14,6 +15,7 @@ app.register_blueprint(main)
 app.register_blueprint(pacientes)
 app.register_blueprint(consultas)
 app.register_blueprint(dentistas)
+app.register_blueprint(perfil)
 
 def init_db():
     conn = get_db_connection()

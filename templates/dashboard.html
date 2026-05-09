@@ -2,9 +2,62 @@
 
 {% block content %}
 
+<h2>📊 Dashboard</h2>
+
+<!-- CARDS DE TOTAIS -->
+<div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:16px; margin-bottom:30px;" id="cards-totais">
+    <div class="card" style="text-align:center; border-top:4px solid #0f4c81;">
+        <div style="font-size:28px; font-weight:bold; color:#0f4c81;" id="total-hoje">—</div>
+        <div style="color:#555;">Hoje</div>
+    </div>
+    <div class="card" style="text-align:center; border-top:4px solid #27ae60;">
+        <div style="font-size:28px; font-weight:bold; color:#27ae60;" id="total-semana">—</div>
+        <div style="color:#555;">Esta Semana</div>
+    </div>
+    <div class="card" style="text-align:center; border-top:4px solid #e67e22;">
+        <div style="font-size:28px; font-weight:bold; color:#e67e22;" id="total-quinzena">—</div>
+        <div style="color:#555;">Quinzena</div>
+    </div>
+    <div class="card" style="text-align:center; border-top:4px solid #8e44ad;">
+        <div style="font-size:28px; font-weight:bold; color:#8e44ad;" id="total-mes">—</div>
+        <div style="color:#555;">Este Mês</div>
+    </div>
+    <div class="card" style="text-align:center; border-top:4px solid #e74c3c;">
+        <div style="font-size:28px; font-weight:bold; color:#e74c3c;" id="total-ano">—</div>
+        <div style="color:#555;">Este Ano</div>
+    </div>
+</div>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:30px;">
+
+    <!-- GRÁFICO POR DIA -->
+    <div class="card">
+        <h3>📅 Consultas por Dia</h3>
+        <canvas id="grafico-dias"></canvas>
+    </div>
+
+    <!-- GRÁFICO POR DENTISTA -->
+    <div class="card">
+        <h3>🦷 Atendimentos por Dentista</h3>
+        <canvas id="grafico-dentistas"></canvas>
+    </div>
+
+</div>
+
+<!-- TABELA POR DENTISTA -->
 <div class="card">
-    <h2>Dashboard</h2>
-    <canvas id="grafico"></canvas>
+    <h3>📋 Detalhamento por Dentista</h3>
+    <table id="tabela-dentistas">
+        <tr>
+            <th>Dentista</th>
+            <th>Especialidade</th>
+            <th>Hoje</th>
+            <th>Semana</th>
+            <th>Mês</th>
+            <th>Ano</th>
+            <th>Total</th>
+        </tr>
+    </table>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -14,17 +67,54 @@ fetch('/dashboard/dados')
 .then(res => res.json())
 .then(dados => {
 
-    new Chart(document.getElementById('grafico'), {
+    // CARDS
+    document.getElementById('total-hoje').textContent     = dados.totais.hoje;
+    document.getElementById('total-semana').textContent   = dados.totais.semana;
+    document.getElementById('total-quinzena').textContent = dados.totais.quinzena;
+    document.getElementById('total-mes').textContent      = dados.totais.mes;
+    document.getElementById('total-ano').textContent      = dados.totais.ano;
+
+    // GRÁFICO POR DIA
+    new Chart(document.getElementById('grafico-dias'), {
         type: 'bar',
         data: {
-            labels: dados.labels,
+            labels: dados.por_dia.labels,
             datasets: [{
-                label: 'Consultas por dia',
-                data: dados.valores
+                label: 'Consultas',
+                data: dados.por_dia.valores,
+                backgroundColor: '#0f4c81'
+            }]
+        },
+        options: { plugins: { legend: { display: false } } }
+    });
+
+    // GRÁFICO POR DENTISTA
+    new Chart(document.getElementById('grafico-dentistas'), {
+        type: 'doughnut',
+        data: {
+            labels: dados.por_dentista.map(d => d.dentista),
+            datasets: [{
+                data: dados.por_dentista.map(d => d.total),
+                backgroundColor: ['#0f4c81','#27ae60','#e67e22','#8e44ad','#e74c3c','#2980b9','#16a085']
             }]
         }
     });
 
+    // TABELA POR DENTISTA
+    const tabela = document.getElementById('tabela-dentistas');
+    dados.por_dentista.forEach(d => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${d.dentista}</td>
+            <td>${d.especialidade || '—'}</td>
+            <td>${d.hoje}</td>
+            <td>${d.semana}</td>
+            <td>${d.mes}</td>
+            <td>${d.ano}</td>
+            <td><strong>${d.total}</strong></td>
+        `;
+        tabela.appendChild(tr);
+    });
 });
 </script>
 

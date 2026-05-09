@@ -8,7 +8,22 @@
 
 <form method="POST" action="/minha_area/salvar_consulta">
 
-    <p><strong>Paciente:</strong> {{ paciente.nome }}</p>
+    <!-- 👤 PACIENTE -->
+    <label>Paciente</label>
+    {% if pacientes %}
+        <select name="paciente_id" id="paciente_select" required>
+            <option value="">Selecione o paciente</option>
+            {% for p in pacientes %}
+                <option value="{{ p.id }}"
+                    {% if paciente and p.id == paciente.id %}selected{% endif %}>
+                    {{ p.nome }}
+                </option>
+            {% endfor %}
+        </select>
+    {% else %}
+        <p style="color:red;">Nenhum paciente cadastrado.</p>
+        <input type="hidden" name="paciente_id" value="{{ paciente.id if paciente else '' }}">
+    {% endif %}
 
     <!-- 🦷 DENTISTA -->
     <label>Dentista</label>
@@ -44,44 +59,38 @@
 
 </div>
 
-<!-- 🔥 SCRIPT COMPLETO -->
 <script>
-
-// 🧠 MAPA PROCEDIMENTO
 const mapa = {
-    "Endodontia": ["Canal"],
-    "Cirurgia": ["Extração"],
-    "Dentística": ["Restauração"],
-    "Periodontia": ["Raspagem"],
-    "Odontopediatria": ["Infantil"],
-    "Próteses": ["Prótese"]
+    "Endodontia":     ["Canal"],
+    "Cirurgia":       ["Extração"],
+    "Dentística":     ["Restauração"],
+    "Periodontia":    ["Raspagem"],
+    "Odontopediatria":["Infantil"],
+    "Próteses":       ["Prótese"]
 };
 
-// 🔹 Atualizar procedimentos
 function atualizarProcedimentos() {
-    const selectDentista = document.getElementById('dentista_select');
-    const especialidade = selectDentista.options[selectDentista.selectedIndex].getAttribute("data-especialidade");
-
+    const sel = document.getElementById('dentista_select');
+    const especialidade = sel.options[sel.selectedIndex].getAttribute("data-especialidade");
     const selectProc = document.getElementById('procedimento_select');
     selectProc.innerHTML = '<option value="">Selecione</option>';
-
     if (mapa[especialidade]) {
         mapa[especialidade].forEach(p => {
             let opt = document.createElement('option');
-            opt.value = p;
-            opt.textContent = p;
+            opt.value = p; opt.textContent = p;
             selectProc.appendChild(opt);
         });
     }
 }
 
-// 🔹 Validar dia da escala
+function limparHorarios() {
+    document.getElementById('hora_select').innerHTML = '<option value="">Selecione um horário</option>';
+}
+
 function validarDia() {
     const dentista = document.getElementById('dentista_select').value;
     const data = document.getElementById('data_input').value;
-
     if (!dentista || !data) return;
-
     fetch(`/consultas/verificar_dia?dentista_id=${dentista}&data=${data}`)
         .then(res => res.json())
         .then(resp => {
@@ -93,45 +102,27 @@ function validarDia() {
         });
 }
 
-// 🔹 Limpar horários
-function limparHorarios() {
-    const select = document.getElementById('hora_select');
-    select.innerHTML = '<option value="">Selecione um horário</option>';
-}
-
-// 🔹 Carregar horários disponíveis
 function carregarHorarios() {
     const dentista = document.getElementById('dentista_select').value;
     const data = document.getElementById('data_input').value;
-
     if (!dentista || !data) return;
-
     fetch(`/consultas/horarios_disponiveis?dentista_id=${dentista}&data=${data}`)
-        .then(response => response.json())
+        .then(res => res.json())
         .then(horarios => {
-
             const select = document.getElementById('hora_select');
             select.innerHTML = '<option value="">Selecione um horário</option>';
-
             if (horarios.length === 0) {
                 select.innerHTML = '<option value="">Sem horários disponíveis</option>';
                 return;
             }
-
             horarios.forEach(h => {
-                const option = document.createElement('option');
-                option.value = h;
-                option.textContent = h;
-                select.appendChild(option);
+                const opt = document.createElement('option');
+                opt.value = h; opt.textContent = h;
+                select.appendChild(opt);
             });
-
-        })
-        .catch(err => {
-            console.error("Erro ao carregar horários:", err);
         });
 }
 
-// 🎯 EVENTOS
 document.getElementById('dentista_select').addEventListener('change', () => {
     atualizarProcedimentos();
     limparHorarios();
@@ -141,7 +132,6 @@ document.getElementById('data_input').addEventListener('change', () => {
     validarDia();
     carregarHorarios();
 });
-
 </script>
 
 {% endblock %}

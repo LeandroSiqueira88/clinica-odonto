@@ -47,7 +47,7 @@ def salvar_paciente():
     return redirect('/login')
 
 @pacientes.route('/pacientes/lista')
-@tipo_required(['master', 'admin', 'atendente', 'dentista', 'operador'])
+@tipo_required(['master', 'admin', 'operador', 'atendente', 'dentista'])
 def lista_pacientes():
     busca = request.args.get('busca', '')
     conn = get_db_connection()
@@ -89,6 +89,25 @@ def atualizar_paciente(id):
         dados.get('bairro'), dados.get('cidade'), dados.get('estado'), dados.get('numero'),
         dados.get('complemento'), dados.get('responsavel_nome'), id
     ))
+
+    # Atualizar email e senha do usuário vinculado
+    email_login = dados.get('email_login', '').strip()
+    senha = dados.get('senha', '').strip()
+    if email_login or senha:
+        cur.execute(f'SELECT usuario_id FROM pacientes WHERE id = {p()}', (id,))
+        row = cur.fetchone()
+        usuario_id = row[0] if row else None
+        if usuario_id:
+            if email_login and senha:
+                cur.execute(f'UPDATE usuarios SET email={p()}, senha={p()} WHERE id={p()}',
+                    (email_login, senha, usuario_id))
+            elif email_login:
+                cur.execute(f'UPDATE usuarios SET email={p()} WHERE id={p()}',
+                    (email_login, usuario_id))
+            elif senha:
+                cur.execute(f'UPDATE usuarios SET senha={p()} WHERE id={p()}',
+                    (senha, usuario_id))
+
     conn.commit()
     conn.close()
     flash('Paciente atualizado!')
@@ -105,7 +124,7 @@ def excluir_paciente(id):
     return redirect('/pacientes/lista')
 
 @pacientes.route('/prontuario/<int:id>')
-@tipo_required(['master', 'admin', 'dentista', 'atendente', 'operador'])
+@tipo_required(['master', 'admin', 'operador', 'atendente', 'dentista'])
 def prontuario(id):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -131,7 +150,7 @@ def salvar_prontuario():
     return redirect(f"/prontuario/{dados['paciente_id']}")
 
 @pacientes.route('/pacientes/anamnese/<int:id>')
-@tipo_required(['master', 'admin', 'dentista', 'atendente', 'operador'])
+@tipo_required(['master', 'admin', 'operador', 'atendente', 'dentista'])
 def anamnese(id):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -142,7 +161,7 @@ def anamnese(id):
     return render_template('anamnese.html', anamnese=anam, paciente_id=id)
 
 @pacientes.route('/pacientes/anamnese/salvar', methods=['POST'])
-@tipo_required(['master', 'admin', 'dentista', 'atendente'])
+@tipo_required(['master', 'admin', 'operador', 'atendente', 'dentista'])
 def salvar_anamnese():
     dados = request.form
     conn = get_db_connection()

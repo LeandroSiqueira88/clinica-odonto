@@ -2,21 +2,23 @@
 
 {% block content %}
 
+<div class="card">
 <h2>Editar Usuário</h2>
 
 <form method="POST" action="/usuarios/atualizar/{{ usuario.id }}">
 
-    <input name="nome" value="{{ usuario.nome }}" required>
-    <input name="email" value="{{ usuario.email }}" required>
+    <input name="nome" value="{{ usuario.nome }}" placeholder="Nome" required>
+    <input name="email" value="{{ usuario.email }}" placeholder="Email" required>
+    <input type="password" name="senha" placeholder="Nova senha (deixe em branco para não alterar)">
 
     <select name="tipo">
-        <option value="admin" {% if usuario.tipo == 'admin' %}selected{% endif %}>Admin</option>
-        <option value="dentista" {% if usuario.tipo == 'dentista' %}selected{% endif %}>Dentista</option>
-        <option value="atendente" {% if usuario.tipo == 'atendente' %}selected{% endif %}>Atendente</option>
-        <option value="operador" {% if usuario.tipo == 'operador' %}selected{% endif %}>Operador</option>
+        <option value="admin"      {% if usuario.tipo == 'admin' %}selected{% endif %}>Admin</option>
+        <option value="dentista"   {% if usuario.tipo == 'dentista' %}selected{% endif %}>Dentista</option>
+        <option value="atendente"  {% if usuario.tipo == 'atendente' %}selected{% endif %}>Atendente</option>
+        <option value="operador"   {% if usuario.tipo == 'operador' %}selected{% endif %}>Operador</option>
     </select>
 
-    <h3>Dados do Dentista</h3>
+    <h3>Dados do Dentista (se aplicável)</h3>
 
     <select name="especialidade">
         <option value="">Especialidade</option>
@@ -33,5 +35,6 @@
     <button type="submit">Salvar</button>
 
 </form>
+</div>
 
 {% endblock %}

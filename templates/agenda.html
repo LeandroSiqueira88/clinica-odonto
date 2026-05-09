@@ -6,40 +6,69 @@
 
 <h2>Agenda</h2>
 
-<h4><a href="/minha_area/nova_consulta">Agendar Consulta</a></h4>
+{% if session.usuario_tipo in ['master','admin','operador','atendente'] %}
+<h4><a href="/consultas/nova">➕ Nova Consulta</a></h4>
+{% endif %}
 
 <!-- 🔎 FILTROS -->
-<form method="GET">
+<form method="GET" style="display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end; margin-bottom:20px;">
 
-    <label>Dentista</label>
-    <select name="dentista_id">
-        <option value="">Todos</option>
-        {% for d in dentistas %}
-            <option value="{{ d.id }}"
-                {% if request.args.get('dentista_id') == d.id|string %}selected{% endif %}>
-                {{ d.nome }}
-            </option>
-        {% endfor %}
-    </select>
+    <div>
+        <label>Data</label>
+        <input type="date" name="data" id="filtro_data" value="{{ request.args.get('data', '') }}" style="width:160px;">
+    </div>
 
-    <label>Especialidade</label>
-    <select name="especialidade">
-        <option value="">Todas</option>
-        <option {% if request.args.get('especialidade') == 'Endodontia' %}selected{% endif %}>Endodontia</option>
-        <option {% if request.args.get('especialidade') == 'Cirurgia' %}selected{% endif %}>Cirurgia</option>
-        <option {% if request.args.get('especialidade') == 'Dentística' %}selected{% endif %}>Dentística</option>
-        <option {% if request.args.get('especialidade') == 'Periodontia' %}selected{% endif %}>Periodontia</option>
-        <option {% if request.args.get('especialidade') == 'Odontopediatria' %}selected{% endif %}>Odontopediatria</option>
-        <option {% if request.args.get('especialidade') == 'Próteses' %}selected{% endif %}>Próteses</option>
-    </select>
+    <div>
+        <label>Paciente</label>
+        <input name="paciente" placeholder="Digite o nome..." value="{{ request.args.get('paciente','') }}" style="width:180px;">
+    </div>
 
-    <button type="submit">Filtrar</button>
+    <div>
+        <label>Dentista</label>
+        <select name="dentista_id" style="width:170px;">
+            <option value="">Todos</option>
+            {% for d in dentistas %}
+                <option value="{{ d.id }}" {% if request.args.get('dentista_id') == d.id|string %}selected{% endif %}>
+                    {{ d.nome }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label>Especialidade</label>
+        <select name="especialidade" style="width:160px;">
+            <option value="">Todas</option>
+            <option {% if request.args.get('especialidade') == 'Endodontia' %}selected{% endif %}>Endodontia</option>
+            <option {% if request.args.get('especialidade') == 'Cirurgia' %}selected{% endif %}>Cirurgia</option>
+            <option {% if request.args.get('especialidade') == 'Dentística' %}selected{% endif %}>Dentística</option>
+            <option {% if request.args.get('especialidade') == 'Periodontia' %}selected{% endif %}>Periodontia</option>
+            <option {% if request.args.get('especialidade') == 'Odontopediatria' %}selected{% endif %}>Odontopediatria</option>
+            <option {% if request.args.get('especialidade') == 'Próteses' %}selected{% endif %}>Próteses</option>
+        </select>
+    </div>
+
+    <div>
+        <label>Status</label>
+        <select name="status" style="width:140px;">
+            <option value="">Todos</option>
+            <option {% if request.args.get('status') == 'agendado' %}selected{% endif %} value="agendado">Agendado</option>
+            <option {% if request.args.get('status') == 'confirmado' %}selected{% endif %} value="confirmado">Confirmado</option>
+            <option {% if request.args.get('status') == 'atendido' %}selected{% endif %} value="atendido">Atendido</option>
+            <option {% if request.args.get('status') == 'faltou' %}selected{% endif %} value="faltou">Faltou</option>
+            <option {% if request.args.get('status') == 'cancelado' %}selected{% endif %} value="cancelado">Cancelado</option>
+        </select>
+    </div>
+
+    <div style="display:flex; gap:8px;">
+        <button type="submit">🔍 Filtrar</button>
+        <a href="/consultas" style="padding:10px 15px; background:#aaa; color:white; border-radius:6px; text-decoration:none;">✖ Limpar</a>
+    </div>
 
 </form>
 
 <!-- 📊 TABELA -->
 <table>
-
 <tr>
     <th>ID</th>
     <th>Data</th>
@@ -53,44 +82,40 @@
 
 {% for c in consultas %}
 <tr>
-
     <td>{{ c.id }}</td>
     <td>{{ c.data }}</td>
     <td>{{ c.hora }}</td>
     <td>{{ c.paciente }}</td>
     <td>{{ c.dentista }}</td>
     <td>{{ c.especialidade }}</td>
-
-    <!-- 🎨 STATUS -->
-    <td class="status-{{ c.status }}">
-        {{ c.status }}
-    </td>
-
-    <!-- ⚙️ AÇÕES -->
+    <td class="status-{{ c.status }}">{{ c.status }}</td>
     <td>
-
-        <!-- 🔍 VER DETALHE -->
         <a href="/consultas/detalhe/{{ c.id }}" title="Ver detalhes">🔍</a>
-
-        <!-- ✔ CONFIRMAR -->
         <a href="/consultas/status/{{ c.id }}/confirmado" title="Confirmar">✔</a>
-
-        <!-- 🦷 ATENDIDO -->
         <a href="/consultas/status/{{ c.id }}/atendido" title="Atendido">🦷</a>
-
-        <!-- ❌ FALTOU -->
         <a href="/consultas/status/{{ c.id }}/faltou" title="Faltou">❌</a>
-
-        <!-- 🚫 CANCELAR -->
         <a href="/consultas/status/{{ c.id }}/cancelado" title="Cancelar">🚫</a>
-
     </td>
-
 </tr>
 {% endfor %}
+
+{% if not consultas %}
+<tr><td colspan="8" style="text-align:center; color:#999; padding:20px;">Nenhuma consulta encontrada.</td></tr>
+{% endif %}
 
 </table>
 
 </div>
+
+<script>
+// Preenche o campo de data com hoje se estiver vazio
+window.addEventListener('DOMContentLoaded', function() {
+    const campo = document.getElementById('filtro_data');
+    if (!campo.value) {
+        const hoje = new Date().toISOString().split('T')[0];
+        campo.value = hoje;
+    }
+});
+</script>
 
 {% endblock %}

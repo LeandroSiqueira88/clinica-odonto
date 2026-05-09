@@ -2,71 +2,169 @@
 <html>
 <head>
     <title>Clínica Odonto</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* NAVBAR */
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #0f4c81;
+            color: white;
+            padding: 14px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-logo { font-size: 20px; font-weight: bold; }
+        .nav-usuario {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+        .nav-usuario a {
+            color: #cfe3f5;
+            text-decoration: none;
+            background: rgba(255,255,255,0.15);
+            padding: 5px 12px;
+            border-radius: 20px;
+            transition: 0.2s;
+        }
+        .nav-usuario a:hover { background: rgba(255,255,255,0.3); }
+        .nav-usuario span { color: #cfe3f5; }
+
+        /* MENU TOGGLE (mobile) */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 26px;
+            cursor: pointer;
+            padding: 0 8px;
+        }
+
+        /* LAYOUT */
+        .layout { display: flex; min-height: calc(100vh - 53px); }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 220px;
+            min-width: 220px;
+            background: #1b3a57;
+            padding-top: 10px;
+            transition: transform 0.3s;
+        }
+        .sidebar a {
+            display: block;
+            color: #cfe3f5;
+            padding: 11px 20px;
+            text-decoration: none;
+            transition: 0.2s;
+            font-size: 15px;
+        }
+        .sidebar a:hover { background: #0f4c81; color: white; }
+
+        /* CONTEÚDO */
+        .content { flex: 1; padding: 24px; overflow-x: auto; }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+
+            .sidebar {
+                position: fixed;
+                top: 53px;
+                left: 0;
+                height: 100%;
+                z-index: 99;
+                transform: translateX(-100%);
+                width: 240px;
+                box-shadow: 4px 0 12px rgba(0,0,0,0.3);
+            }
+            .sidebar.aberto { transform: translateX(0); }
+
+            .layout { flex-direction: column; }
+            .content { padding: 16px; }
+
+            table { font-size: 13px; }
+            th, td { padding: 7px 6px; }
+
+            input, select, textarea {
+                font-size: 16px; /* evita zoom automático no iOS */
+            }
+
+            .nav-usuario span { display: none; } /* esconde "Olá, Nome" no mobile */
+        }
+    </style>
 </head>
 <body>
 
+<!-- NAVBAR -->
 <nav>
-    🦷 Clínica Odonto
+    <div style="display:flex; align-items:center; gap:10px;">
+        <button class="menu-toggle" onclick="toggleMenu()" title="Menu">☰</button>
+        <span class="nav-logo">🦷 Clínica Odonto</span>
+    </div>
+
+    <div class="nav-usuario">
+        {% if session.usuario_nome %}
+            <span>Olá, <strong>{{ session.usuario_nome }}</strong> ({{ session.usuario_tipo }})</span>
+            <a href="/perfil">⚙️ Meu Perfil</a>
+        {% endif %}
+    </div>
 </nav>
 
 <div class="layout">
 
-    <div class="sidebar">
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
 
-        <a href="/">🏠 Painel</a>
+        {% if session.usuario_tipo == 'cliente' %}
+            <a href="/minha_area">🏠 Painel</a>
+            <a href="/minha_area">📅 Minha Agenda</a>
+        {% else %}
+            <a href="/">🏠 Painel</a>
+        {% endif %}
 
-        {% if session.usuario_tipo in ['master','admin'] %}
+        {% if session.usuario_tipo in ['master','admin','operador','atendente','dentista'] %}
             <a href="/consultas">📅 Agenda</a>
             <a href="/agenda_calendario">📅 Calendário</a>
             <a href="/pacientes/lista">👤 Pacientes</a>
+        {% endif %}
+
+        {% if session.usuario_tipo in ['master','admin','operador','atendente'] %}
             <a href="/cadastro">➕ Cadastrar Paciente</a>
+        {% endif %}
+
+        {% if session.usuario_tipo in ['master','admin'] %}
             <a href="/usuarios">👥 Cadastrar Usuário</a>
             <a href="/usuarios/lista">📋 Lista Usuários</a>
             <a href="/dentistas">🦷 Dentistas</a>
+        {% endif %}
+
+        {% if session.usuario_tipo in ['master','admin','operador','atendente','dentista'] %}
             <a href="/escala">⏰ Escala</a>
             <a href="/dashboard">📊 Dashboard</a>
         {% endif %}
 
-        {% if session.usuario_tipo == 'operador' %}
-            <a href="/consultas">📅 Agenda</a>
-            <a href="/agenda_calendario">📅 Calendário</a>
-            <a href="/pacientes/lista">👤 Pacientes</a>
-            <a href="/cadastro">➕ Cadastrar Paciente</a>
-            <a href="/escala">⏰ Escala</a>
-        {% endif %}
-
-        {% if session.usuario_tipo == 'atendente' %}
-            <a href="/consultas">📅 Agenda</a>
-            <a href="/agenda_calendario">📅 Calendário</a>
-            <a href="/pacientes/lista">👤 Pacientes</a>
-            <a href="/cadastro">➕ Cadastrar Paciente</a>
-        {% endif %}
-
-        {% if session.usuario_tipo == 'dentista' %}
-            <a href="/consultas">📅 Agenda</a>
-            <a href="/agenda_calendario">📅 Calendário</a>
-            <a href="/pacientes/lista">👤 Pacientes</a>
-        {% endif %}
-
-        {% if session.usuario_tipo == 'cliente' %}
-            <a href="/minha_area">📅 Minha Agenda</a>
-        {% endif %}
-
+        <a href="/perfil">⚙️ Meu Perfil</a>
         <a href="/logout">🚪 Sair</a>
 
     </div>
 
-    <div class="content">
+    <!-- CONTEÚDO -->
+    <div class="content" id="conteudo">
 
-        <!-- 🔔 NOTIFICAÇÕES -->
         {% with messages = get_flashed_messages() %}
           {% if messages %}
-            <div class="card">
+            <div class="card" style="background:#eafaf1; border-left:4px solid #27ae60;">
                 {% for msg in messages %}
-                    <p>{{ msg }}</p>
+                    <p style="margin:0;">✅ {{ msg }}</p>
                 {% endfor %}
-            </div>
+            </div><br>
           {% endif %}
         {% endwith %}
 
@@ -74,6 +172,16 @@
     </div>
 
 </div>
+
+<script>
+function toggleMenu() {
+    document.getElementById('sidebar').classList.toggle('aberto');
+}
+// Fecha sidebar ao clicar fora (mobile)
+document.getElementById('conteudo').addEventListener('click', function() {
+    document.getElementById('sidebar').classList.remove('aberto');
+});
+</script>
 
 </body>
 </html>

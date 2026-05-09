@@ -2,6 +2,8 @@
 
 {% block content %}
 
+<div class="card">
+
 <h2>Nova Consulta</h2>
 
 <form method="POST" action="/consultas/salvar">
@@ -15,31 +17,111 @@
     </select>
 
     <label>Dentista</label>
-    <select name="dentista_id" required>
+    <select name="dentista_id" id="dentista_select" required>
         <option value="">Selecione</option>
         {% for d in dentistas %}
-            <option value="{{ d.id }}">{{ d.nome }}</option>
+            <option value="{{ d.id }}" data-especialidade="{{ d.especialidade }}">
+                {{ d.nome }} — {{ d.especialidade }}
+            </option>
         {% endfor %}
     </select>
 
     <label>Data</label>
-    <input type="date" name="data" required>
+    <input type="date" name="data" id="data_input" required>
+    <small id="aviso_dia" style="color:red; display:none;">⚠️ Dentista não atende nesse dia.</small>
 
     <label>Hora</label>
-    <input type="time" name="hora" min="07:00" max="19:00" required>
-
-    <label>Procedimento</label>
-    <select name="procedimento">
-        <option>Endodontia</option>
-        <option>Cirurgia</option>
-        <option>Dentística</option>
-        <option>Periodontia</option>
-        <option>Odontopediatria</option>
-        <option>Próteses</option>
+    <select name="hora" id="hora_select" required>
+        <option value="">Selecione dentista e data primeiro</option>
     </select>
 
+    <label>Procedimento</label>
+    <select name="procedimento" id="procedimento_select" required>
+        <option value="">Selecione</option>
+    </select>
+
+    <br><br>
     <button type="submit">Agendar</button>
 
 </form>
+
+</div>
+
+<script>
+const mapa = {
+    "Endodontia":      ["Canal"],
+    "Cirurgia":        ["Extração"],
+    "Dentística":      ["Restauração"],
+    "Periodontia":     ["Raspagem"],
+    "Odontopediatria": ["Infantil"],
+    "Próteses":        ["Prótese"]
+};
+
+function atualizarProcedimentos() {
+    const sel = document.getElementById('dentista_select');
+    const especialidade = sel.options[sel.selectedIndex].getAttribute("data-especialidade");
+    const selectProc = document.getElementById('procedimento_select');
+    selectProc.innerHTML = '<option value="">Selecione</option>';
+    if (mapa[especialidade]) {
+        mapa[especialidade].forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p; opt.textContent = p;
+            selectProc.appendChild(opt);
+        });
+    }
+}
+
+function limparHorarios(msg) {
+    const sel = document.getElementById('hora_select');
+    sel.innerHTML = `<option value="">${msg || 'Selecione dentista e data primeiro'}</option>`;
+}
+
+function carregarHorarios() {
+    const dentista = document.getElementById('dentista_select').value;
+    const data = document.getElementById('data_input').value;
+    const aviso = document.getElementById('aviso_dia');
+
+    if (!dentista || !data) return;
+
+    // Verifica se dentista atende nesse dia
+    fetch(`/consultas/verificar_dia?dentista_id=${dentista}&data=${data}`)
+        .then(res => res.json())
+        .then(resp => {
+            if (!resp.valido) {
+                aviso.style.display = 'block';
+                limparHorarios('Dentista não atende nesse dia');
+                return;
+            }
+            aviso.style.display = 'none';
+
+            // Busca horários disponíveis
+            fetch(`/consultas/horarios_disponiveis?dentista_id=${dentista}&data=${data}`)
+                .then(res => res.json())
+                .then(horarios => {
+                    if (horarios.length === 0) {
+                        limparHorarios('Sem horários disponíveis nesse dia');
+                        return;
+                    }
+                    const sel = document.getElementById('hora_select');
+                    sel.innerHTML = '<option value="">Selecione um horário</option>';
+                    horarios.forEach(h => {
+                        const opt = document.createElement('option');
+                        opt.value = h; opt.textContent = h;
+                        sel.appendChild(opt);
+                    });
+                });
+        });
+}
+
+document.getElementById('dentista_select').addEventListener('change', () => {
+    atualizarProcedimentos();
+    limparHorarios();
+    document.getElementById('aviso_dia').style.display = 'none';
+    // Se já tem data selecionada, recarrega horários
+    if (document.getElementById('data_input').value) carregarHorarios();
+});
+
+document.getElementById('data_input').addEventListener('change', carregarHorarios);
+</script>
 
 {% endblock %}

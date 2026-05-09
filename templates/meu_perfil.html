@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card" style="max-width:600px;">
+<h2>⚙️ Meu Perfil</h2>
+
+{% if erro %}<p style="color:red;">{{ erro }}</p>{% endif %}
+{% if sucesso %}<p style="color:green;">{{ sucesso }}</p>{% endif %}
+
+<form method="POST" action="/perfil/salvar">
+
+    <h3>Dados Pessoais</h3>
+    <input name="nome" placeholder="Nome" value="{{ usuario.nome }}" required>
+    <input name="email" placeholder="Email" value="{{ usuario.email }}" required>
+
+    {% if paciente %}
+    <input name="telefone" placeholder="Telefone" value="{{ paciente.telefone or '' }}">
+    <input type="date" name="data_nascimento" value="{{ paciente.data_nascimento or '' }}">
+    <input name="cep" id="cep" placeholder="CEP" value="{{ paciente.cep or '' }}">
+    <input name="logradouro" id="logradouro" placeholder="Rua" value="{{ paciente.logradouro or '' }}">
+    <input name="numero" placeholder="Número" value="{{ paciente.numero or '' }}">
+    <input name="bairro" id="bairro" placeholder="Bairro" value="{{ paciente.bairro or '' }}">
+    <input name="cidade" id="cidade" placeholder="Cidade" value="{{ paciente.cidade or '' }}">
+    <input name="estado" id="estado" placeholder="Estado" value="{{ paciente.estado or '' }}">
+    {% endif %}
+
+    <h3>Alterar Senha</h3>
+    <input type="password" name="senha_atual" placeholder="Senha atual">
+    <input type="password" name="senha_nova" placeholder="Nova senha">
+    <input type="password" name="senha_confirma" placeholder="Confirmar nova senha">
+
+    <br><br>
+    <button type="submit">💾 Salvar Alterações</button>
+
+</form>
+</div>
+
+<script>
+const cepInput = document.getElementById('cep');
+if (cepInput) {
+    cepInput.addEventListener('blur', function() {
+        const cep = this.value.replace(/\D/g, '');
+        if (cep.length === 8) {
+            fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.erro) {
+                        document.getElementById('logradouro').value = data.logradouro;
+                        document.getElementById('bairro').value = data.bairro;
+                        document.getElementById('cidade').value = data.localidade;
+                        document.getElementById('estado').value = data.uf;
+                    }
+                });
+        }
+    });
+}
+</script>
+
+{% endblock %}

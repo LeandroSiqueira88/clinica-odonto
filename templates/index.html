@@ -1,6 +1,66 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Painel do Sistema</h1>
-    <p>Bem-vindo ao sistema da clínica.</p>
+
+<h1>Bem-vindo ao Sistema da Clínica Odonto 🦷</h1>
+<p style="color:#555; margin-bottom: 30px;">Gerencie consultas, pacientes e muito mais em um só lugar.</p>
+
+<!-- 💡 DICAS DE SAÚDE BUCAL -->
+<h2 style="color:#0f4c81; margin-bottom: 16px;">💡 Dicas de Saúde Bucal</h2>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; margin-bottom: 40px;">
+
+    <div class="card" style="border-left: 5px solid #0f4c81;">
+        <h3>🪥 Escove 3x ao dia</h3>
+        <p>Escove os dentes após cada refeição principal, por pelo menos 2 minutos, usando creme dental com flúor.</p>
+    </div>
+
+    <div class="card" style="border-left: 5px solid #27ae60;">
+        <h3>🧵 Use o fio dental diariamente</h3>
+        <p>O fio dental remove resíduos entre os dentes onde a escova não alcança, prevenindo cáries e gengivite.</p>
+    </div>
+
+    <div class="card" style="border-left: 5px solid #e67e22;">
+        <h3>💧 Beba bastante água</h3>
+        <p>A água ajuda a eliminar resíduos de alimentos e bactérias, além de manter a saliva em quantidade adequada.</p>
+    </div>
+
+    <div class="card" style="border-left: 5px solid #8e44ad;">
+        <h3>🍬 Evite açúcar em excesso</h3>
+        <p>O açúcar alimenta as bactérias que causam cáries. Prefira frutas e reduza doces e refrigerantes.</p>
+    </div>
+
+    <div class="card" style="border-left: 5px solid #e74c3c;">
+        <h3>🚭 Não fume</h3>
+        <p>O tabaco mancha os dentes, causa mau hálito, gengivite e aumenta o risco de câncer bucal.</p>
+    </div>
+
+    <div class="card" style="border-left: 5px solid #2980b9;">
+        <h3>📅 Consulte seu dentista</h3>
+        <p>Visite o dentista a cada 6 meses para limpeza e prevenção. Problemas detectados cedo são mais fáceis de tratar.</p>
+    </div>
+
+    <div class="card" style="border-left: 5px solid #16a085;">
+        <h3>👶 Cuidado desde cedo</h3>
+        <p>A saúde bucal começa na infância. Limpe as gengivas do bebê e consulte o dentista assim que o primeiro dente nascer.</p>
+    </div>
+
+    <div class="card" style="border-left: 5px solid #f39c12;">
+        <h3>😴 Cuide do bruxismo</h3>
+        <p>Apertar ou ranger os dentes durante o sono desgasta o esmalte. Converse com seu dentista sobre o uso de uma placa de proteção.</p>
+    </div>
+
+    <div class="card" style="border-left: 5px solid #1abc9c;">
+        <h3>🥦 Alimentação saudável</h3>
+        <p>Alimentos ricos em cálcio como leite, queijo e vegetais fortalecem os dentes e os ossos que os sustentam.</p>
+    </div>
+
+</div>
+
+<!-- 🔖 CURIOSIDADE DO DIA -->
+<div class="card" style="background: #eaf4fb; border-left: 5px solid #0f4c81; margin-bottom: 30px;">
+    <h3>🔬 Você sabia?</h3>
+    <p>O esmalte dentário é o tecido mais duro do corpo humano — mais resistente que os ossos! Mesmo assim, ele não se regenera, por isso a prevenção é essencial.</p>
+</div>
+
 {% endblock %}

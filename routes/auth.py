@@ -34,12 +34,12 @@ def logout():
     return redirect('/login')
 
 @auth.route('/usuarios')
-@tipo_required(['master'])
+@tipo_required(['master', 'admin'])
 def usuarios():
     return render_template('usuarios.html')
 
 @auth.route('/usuarios/salvar', methods=['POST'])
-@tipo_required(['master'])
+@tipo_required(['master', 'admin'])
 def salvar_usuario():
     nome = request.form['nome']
     email = request.form['email'].strip()
@@ -58,7 +58,7 @@ def salvar_usuario():
     return redirect('/usuarios/lista')
 
 @auth.route('/usuarios/lista')
-@tipo_required(['master'])
+@tipo_required(['master', 'admin'])
 def lista_usuarios():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -69,7 +69,7 @@ def lista_usuarios():
     return render_template('lista_usuarios.html', usuarios=usuarios, busca='')
 
 @auth.route('/usuarios/editar/<int:id>')
-@tipo_required(['master'])
+@tipo_required(['master', 'admin'])
 def editar_usuario(id):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -80,25 +80,32 @@ def editar_usuario(id):
     return render_template('editar_usuario.html', usuario=usuario)
 
 @auth.route('/usuarios/atualizar/<int:id>', methods=['POST'])
-@tipo_required(['master'])
+@tipo_required(['master', 'admin'])
 def atualizar_usuario(id):
     nome = request.form['nome']
     email = request.form['email']
     tipo = request.form['tipo']
     especialidade = request.form.get('especialidade', '')
     cro = request.form.get('cro', '')
+    senha = request.form.get('senha', '').strip()
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute(
-        f'UPDATE usuarios SET nome={p()}, email={p()}, tipo={p()}, especialidade={p()}, cro={p()} WHERE id={p()}',
-        (nome, email, tipo, especialidade, cro, id)
-    )
+    if senha:
+        cur.execute(
+            f'UPDATE usuarios SET nome={p()}, email={p()}, senha={p()}, tipo={p()}, especialidade={p()}, cro={p()} WHERE id={p()}',
+            (nome, email, senha, tipo, especialidade, cro, id)
+        )
+    else:
+        cur.execute(
+            f'UPDATE usuarios SET nome={p()}, email={p()}, tipo={p()}, especialidade={p()}, cro={p()} WHERE id={p()}',
+            (nome, email, tipo, especialidade, cro, id)
+        )
     conn.commit()
     conn.close()
     return redirect('/usuarios/lista')
 
 @auth.route('/usuarios/excluir/<int:id>')
-@tipo_required(['master'])
+@tipo_required(['master', 'admin'])
 def excluir_usuario(id):
     conn = get_db_connection()
     cur = conn.cursor()

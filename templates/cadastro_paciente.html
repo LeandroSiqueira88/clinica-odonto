@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<h2>Cadastro de Paciente</h2>
+<h2>{{ 'Editar Paciente' if paciente else 'Cadastro de Paciente' }}</h2>
 
 <form method="POST"
 action="{% if paciente %}/pacientes/atualizar/{{ paciente.id }}{% else %}/pacientes/salvar{% endif %}">
@@ -57,78 +57,51 @@ action="{% if paciente %}/pacientes/atualizar/{{ paciente.id }}{% else %}/pacien
                value="{{ paciente.responsavel_nome if paciente else '' }}">
     </div>
 
-    <!-- 🔐 LOGIN (SÓ NO CADASTRO) -->
-    {% if not paciente %}
-    <h3>Acesso</h3>
-    <input name="email_login" placeholder="Email de acesso">
-    <input type="password" name="senha" placeholder="Senha">
-    {% endif %}
+    <!-- 🔐 LOGIN -->
+    <h3>Acesso ao Sistema</h3>
+    <input name="email_login" placeholder="Email de acesso (login)"
+           value="{{ paciente.email_login if paciente else '' }}">
+    <input type="password" name="senha" placeholder="{% if paciente %}Nova senha (deixe em branco para não alterar){% else %}Senha{% endif %}">
 
     <button type="submit">Salvar</button>
 
 </form>
 
-<!-- 🔥 JavaScript -->
 <script>
-
     function calcularIdade() {
         const campo = document.getElementById('data_nascimento');
         if (!campo.value) return;
-
         const data = new Date(campo.value);
         const hoje = new Date();
-
         let idade = hoje.getFullYear() - data.getFullYear();
         const mes = hoje.getMonth() - data.getMonth();
-
-        if (mes < 0 || (mes === 0 && hoje.getDate() < data.getDate())) {
-            idade--;
-        }
-
+        if (mes < 0 || (mes === 0 && hoje.getDate() < data.getDate())) idade--;
         document.getElementById('idade_texto').innerText = "Idade: " + idade + " anos";
-
-        if (idade < 18) {
-            document.getElementById('responsavel').style.display = 'block';
-        } else {
-            document.getElementById('responsavel').style.display = 'none';
-        }
+        document.getElementById('responsavel').style.display = idade < 18 ? 'block' : 'none';
     }
 
-    // 🔄 dispara ao alterar
     document.getElementById('data_nascimento').addEventListener('change', calcularIdade);
-
-    // 🔄 dispara ao carregar (IMPORTANTE PARA EDIÇÃO)
     window.onload = calcularIdade;
 
-
-    // 🔍 CEP automático
     document.getElementById('cep').addEventListener('blur', function() {
         const cep = this.value.replace(/\D/g, '');
-
         if (cep.length === 8) {
             fetch(`https://viacep.com.br/ws/${cep}/json/`)
-                .then(response => response.json())
+                .then(r => r.json())
                 .then(data => {
                     if (!data.erro) {
                         document.getElementById('logradouro').value = data.logradouro;
                         document.getElementById('bairro').value = data.bairro;
                         document.getElementById('cidade').value = data.localidade;
                         document.getElementById('estado').value = data.uf;
-                    } else {
-                        alert("CEP não encontrado!");
-                    }
+                    } else alert("CEP não encontrado!");
                 });
         }
     });
 
-
-    // 🔐 CPF simples
     document.getElementById('cpf').addEventListener('blur', function() {
-        if (this.value.length < 11) {
-            alert("CPF inválido!");
-        }
+        if (this.value.replace(/\D/g,'').length < 11) alert("CPF inválido!");
     });
-
 </script>
 
 {% endblock %}

@@ -2,11 +2,50 @@
 
 {% block content %}
 
+<div class="card">
+
 <h2>Escala dos Dentistas</h2>
 
-<a href="/escala/nova">+ Nova Escala</a>
+{% if pode_editar %}
+<a href="/escala/nova" style="display:inline-block; margin-bottom:16px; padding:8px 14px; background:#0f4c81; color:white; border-radius:6px; text-decoration:none;">➕ Nova Escala</a>
+{% endif %}
 
-<table border="1">
+<!-- FILTROS -->
+<form method="GET" style="display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end; margin-bottom:20px;">
+
+    <div>
+        <label>Dentista</label>
+        <select name="dentista_id" style="width:200px;">
+            <option value="">Todos</option>
+            {% for d in dentistas %}
+                <option value="{{ d.id }}" {% if request.args.get('dentista_id') == d.id|string %}selected{% endif %}>
+                    {{ d.nome }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label>Dia da Semana</label>
+        <select name="dia_semana" style="width:160px;">
+            <option value="">Todos</option>
+            <option {% if request.args.get('dia_semana') == 'Segunda' %}selected{% endif %}>Segunda</option>
+            <option {% if request.args.get('dia_semana') == 'Terça' %}selected{% endif %}>Terça</option>
+            <option {% if request.args.get('dia_semana') == 'Quarta' %}selected{% endif %}>Quarta</option>
+            <option {% if request.args.get('dia_semana') == 'Quinta' %}selected{% endif %}>Quinta</option>
+            <option {% if request.args.get('dia_semana') == 'Sexta' %}selected{% endif %}>Sexta</option>
+            <option {% if request.args.get('dia_semana') == 'Sábado' %}selected{% endif %}>Sábado</option>
+        </select>
+    </div>
+
+    <div style="display:flex; gap:8px;">
+        <button type="submit">🔍 Filtrar</button>
+        <a href="/escala" style="padding:10px 15px; background:#aaa; color:white; border-radius:6px; text-decoration:none;">✖ Limpar</a>
+    </div>
+
+</form>
+
+<table>
 <tr>
     <th>Dentista</th>
     <th>Dia</th>
@@ -22,11 +61,17 @@
     <td>{{ e.hora_inicio }}</td>
     <td>{{ e.hora_fim }}</td>
     <td>
-        <a href="/escala/editar/{{ e.id }}">Editar</a>
+        {% if pode_editar %}<a href="/escala/editar/{{ e.id }}">✏️ Editar</a>{% else %}—{% endif %}
     </td>
 </tr>
 {% endfor %}
 
+{% if not escala %}
+<tr><td colspan="5" style="text-align:center; color:#999; padding:20px;">Nenhuma escala encontrada.</td></tr>
+{% endif %}
+
 </table>
+
+</div>
 
 {% endblock %}
