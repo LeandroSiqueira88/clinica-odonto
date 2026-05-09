@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card">
+
+<h2>Minha Área</h2>
+<a href="/minha_area/nova_consulta">Agendar Consulta</a>
+<h3>Minhas Consultas</h3>
+
+<table>
+<tr>
+    <th>Data</th>
+    <th>Hora</th>
+    <th>Dentista</th>
+    <th>Procedimento</th>
+    <th>Status</th>
+</tr>
+
+{% for c in consultas %}
+<tr>
+    <td>{{ c.data }}</td>
+    <td>{{ c.hora }}</td>
+    <td>{{ c.dentista_nome }}</td>
+    <td>{{ c.procedimento }}</td>
+    <td class="status-{{ c.status }}">{{ c.status }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+</div>
+
+{% endblock %}

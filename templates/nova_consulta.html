@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Nova Consulta</h2>
+
+<form method="POST" action="/consultas/salvar">
+
+    <label>Paciente</label>
+    <select name="paciente_id" required>
+        <option value="">Selecione</option>
+        {% for p in pacientes %}
+            <option value="{{ p.id }}">{{ p.nome }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Dentista</label>
+    <select name="dentista_id" required>
+        <option value="">Selecione</option>
+        {% for d in dentistas %}
+            <option value="{{ d.id }}">{{ d.nome }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Data</label>
+    <input type="date" name="data" required>
+
+    <label>Hora</label>
+    <input type="time" name="hora" min="07:00" max="19:00" required>
+
+    <label>Procedimento</label>
+    <select name="procedimento">
+        <option>Endodontia</option>
+        <option>Cirurgia</option>
+        <option>Dentística</option>
+        <option>Periodontia</option>
+        <option>Odontopediatria</option>
+        <option>Próteses</option>
+    </select>
+
+    <button type="submit">Agendar</button>
+
+</form>
+
+{% endblock %}

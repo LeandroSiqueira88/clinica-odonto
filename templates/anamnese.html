@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card">
+
+<h2>Anamnese</h2>
+
+<form method="POST" action="/pacientes/anamnese/salvar">
+
+<input type="hidden" name="paciente_id" value="{{ paciente_id }}">
+
+<textarea name="alergias" placeholder="Alergias">{{ anamnese.alergias if anamnese else '' }}</textarea>
+
+<textarea name="medicamentos" placeholder="Medicamentos">{{ anamnese.medicamentos if anamnese else '' }}</textarea>
+
+<textarea name="doencas" placeholder="Doenças">{{ anamnese.doencas if anamnese else '' }}</textarea>
+
+<textarea name="observacoes" placeholder="Observações">{{ anamnese.observacoes if anamnese else '' }}</textarea>
+
+<button>Salvar</button>
+
+</form>
+
+</div>
+
+{% endblock %}

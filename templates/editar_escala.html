@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Editar Escala</h2>
+
+<form method="POST" action="/escala/atualizar/{{ escala.id }}">
+
+    <select name="dentista_id">
+        {% for d in dentistas %}
+            <option value="{{ d.id }}" {% if d.id == escala.dentista_id %}selected{% endif %}>
+                {{ d.nome }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <select name="dia_semana">
+        <option>Segunda</option>
+        <option>Terça</option>
+        <option>Quarta</option>
+        <option>Quinta</option>
+        <option>Sexta</option>
+    </select>
+
+    <input type="time" name="hora_inicio" value="{{ escala.hora_inicio }}">
+    <input type="time" name="hora_fim" value="{{ escala.hora_fim }}">
+
+    <button type="submit">Salvar</button>
+
+</form>
+
+{% endblock %}

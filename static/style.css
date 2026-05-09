@@ -1,0 +1,117 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial;
+    background: #f4f8fb;
+}
+
+/* 🔷 NAVBAR */
+nav {
+    background: #0f4c81;
+    color: white;
+    padding: 15px 20px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* 🧱 LAYOUT */
+.layout {
+    display: flex;
+}
+
+/* 📚 SIDEBAR */
+.sidebar {
+    width: 220px;
+    background: #1b3a57;
+    min-height: 100vh;
+    padding-top: 20px;
+}
+
+.sidebar a {
+    display: block;
+    color: #cfe3f5;
+    padding: 12px 20px;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.sidebar a:hover {
+    background: #0f4c81;
+    color: white;
+}
+
+/* 📦 CONTEÚDO */
+.content {
+    flex: 1;
+    padding: 30px;
+}
+
+/* 🧾 CARD */
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* 📝 INPUTS */
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+}
+
+/* 🔘 BOTÃO */
+button {
+    background: #0f4c81;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0c3c66;
+}
+
+/* 📊 TABELA */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background: white;
+}
+
+th {
+    background: #0f4c81;
+    color: white;
+    padding: 10px;
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+/* 🎨 STATUS */
+.status-agendado {
+    color: #2980b9;
+    font-weight: bold;
+}
+
+.status-atendido {
+    color: #27ae60;
+    font-weight: bold;
+}
+
+.status-faltou {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.status-cancelado {
+    color: #7f8c8d;
+    font-weight: bold;
+}

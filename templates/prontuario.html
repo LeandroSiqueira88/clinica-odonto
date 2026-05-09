@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card">
+
+<h2>Prontuário</h2>
+
+<form method="POST" action="/prontuario/salvar">
+    <input type="hidden" name="paciente_id" value="{{ paciente_id }}">
+
+    <textarea name="historico" placeholder="Histórico"></textarea>
+    <textarea name="diagnostico" placeholder="Diagnóstico"></textarea>
+    <textarea name="tratamento" placeholder="Tratamento"></textarea>
+
+    <button>Salvar</button>
+</form>
+
+<hr>
+
+{% for r in registros %}
+<p><b>{{ r.data }}</b></p>
+<p>{{ r.historico }}</p>
+<p>{{ r.diagnostico }}</p>
+<p>{{ r.tratamento }}</p>
+<hr>
+{% endfor %}
+
+</div>
+
+{% endblock %}

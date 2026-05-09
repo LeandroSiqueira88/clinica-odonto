@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Usuários</h2>
+
+<form method="GET">
+    <input name="busca" placeholder="Buscar..." value="{{ busca }}">
+    <button type="submit">Buscar</button>
+    <a href="/usuarios/lista">Limpar</a>
+</form>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>Tipo</th>
+        <th>Ações</th>
+    </tr>
+
+    {% for u in usuarios %}
+    <tr>
+        <td>{{ u.id }}</td>
+        <td>{{ u.nome }}</td>
+        <td>{{ u.email }}</td>
+        <td>{{ u.tipo }}</td>
+        <td>
+            <a href="/usuarios/excluir/{{ u.id }}" 
+               onclick="return confirm('Tem certeza?')">
+               Excluir
+            </a>
+            <a href="/usuarios/editar/{{ u.id }}">Editar</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

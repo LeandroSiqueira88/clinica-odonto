@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Pacientes</h2>
+
+<form method="GET">
+    <input name="busca" placeholder="Buscar..." value="{{ busca }}">
+    <button type="submit">Buscar</button>
+    <a href="/pacientes/lista">Limpar</a>
+</form>
+
+<table border="1">
+<tr>
+    <th>Nome</th>
+    <th>CPF</th>
+    <th>Ações</th>
+</tr>
+
+{% for p in pacientes %}
+<tr>
+    <td>{{ p.nome }}</td>
+    <td>{{ p.cpf }}</td>
+    <td>
+        <a href="/pacientes/editar/{{ p.id }}">Editar</a>
+        <a href="/pacientes/anamnese/{{ p.id }}">Anamnese</a>
+
+        {% if session.usuario_tipo in ['master','admin'] %}
+        <a href="/pacientes/excluir/{{ p.id }}" onclick="return confirm('Tem certeza?')">Excluir</a>
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
+
+</table>
+
+{% endblock %}

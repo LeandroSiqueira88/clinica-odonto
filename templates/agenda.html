@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card">
+
+<h2>Agenda</h2>
+
+<h4><a href="/minha_area/nova_consulta">Agendar Consulta</a></h4>
+
+<!-- 🔎 FILTROS -->
+<form method="GET">
+
+    <label>Dentista</label>
+    <select name="dentista_id">
+        <option value="">Todos</option>
+        {% for d in dentistas %}
+            <option value="{{ d.id }}"
+                {% if request.args.get('dentista_id') == d.id|string %}selected{% endif %}>
+                {{ d.nome }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <label>Especialidade</label>
+    <select name="especialidade">
+        <option value="">Todas</option>
+        <option {% if request.args.get('especialidade') == 'Endodontia' %}selected{% endif %}>Endodontia</option>
+        <option {% if request.args.get('especialidade') == 'Cirurgia' %}selected{% endif %}>Cirurgia</option>
+        <option {% if request.args.get('especialidade') == 'Dentística' %}selected{% endif %}>Dentística</option>
+        <option {% if request.args.get('especialidade') == 'Periodontia' %}selected{% endif %}>Periodontia</option>
+        <option {% if request.args.get('especialidade') == 'Odontopediatria' %}selected{% endif %}>Odontopediatria</option>
+        <option {% if request.args.get('especialidade') == 'Próteses' %}selected{% endif %}>Próteses</option>
+    </select>
+
+    <button type="submit">Filtrar</button>
+
+</form>
+
+<!-- 📊 TABELA -->
+<table>
+
+<tr>
+    <th>ID</th>
+    <th>Data</th>
+    <th>Hora</th>
+    <th>Paciente</th>
+    <th>Dentista</th>
+    <th>Especialidade</th>
+    <th>Status</th>
+    <th>Ações</th>
+</tr>
+
+{% for c in consultas %}
+<tr>
+
+    <td>{{ c.id }}</td>
+    <td>{{ c.data }}</td>
+    <td>{{ c.hora }}</td>
+    <td>{{ c.paciente }}</td>
+    <td>{{ c.dentista }}</td>
+    <td>{{ c.especialidade }}</td>
+
+    <!-- 🎨 STATUS -->
+    <td class="status-{{ c.status }}">
+        {{ c.status }}
+    </td>
+
+    <!-- ⚙️ AÇÕES -->
+    <td>
+
+        <!-- 🔍 VER DETALHE -->
+        <a href="/consultas/detalhe/{{ c.id }}" title="Ver detalhes">🔍</a>
+
+        <!-- ✔ CONFIRMAR -->
+        <a href="/consultas/status/{{ c.id }}/confirmado" title="Confirmar">✔</a>
+
+        <!-- 🦷 ATENDIDO -->
+        <a href="/consultas/status/{{ c.id }}/atendido" title="Atendido">🦷</a>
+
+        <!-- ❌ FALTOU -->
+        <a href="/consultas/status/{{ c.id }}/faltou" title="Faltou">❌</a>
+
+        <!-- 🚫 CANCELAR -->
+        <a href="/consultas/status/{{ c.id }}/cancelado" title="Cancelar">🚫</a>
+
+    </td>
+
+</tr>
+{% endfor %}
+
+</table>
+
+</div>
+
+{% endblock %}

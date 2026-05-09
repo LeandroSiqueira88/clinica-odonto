@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Agenda do Dentista</h2>
+
+<table border="1">
+<tr>
+    <th>Hora</th>
+    <th>Status</th>
+</tr>
+
+{% for c in consultas %}
+<tr>
+    <td>{{ c.hora }}</td>
+    <td>Ocupado</td>
+</tr>
+{% endfor %}
+
+</table>
+
+{% endblock %}

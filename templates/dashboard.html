@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card">
+    <h2>Dashboard</h2>
+    <canvas id="grafico"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+fetch('/dashboard/dados')
+.then(res => res.json())
+.then(dados => {
+
+    new Chart(document.getElementById('grafico'), {
+        type: 'bar',
+        data: {
+            labels: dados.labels,
+            datasets: [{
+                label: 'Consultas por dia',
+                data: dados.valores
+            }]
+        }
+    });
+
+});
+</script>
+
+{% endblock %}

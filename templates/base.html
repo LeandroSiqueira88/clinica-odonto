@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clínica Odonto</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<nav>
+    🦷 Clínica Odonto
+</nav>
+
+<div class="layout">
+
+    <div class="sidebar">
+
+        <a href="/">🏠 Painel</a>
+
+        {% if session.usuario_tipo in ['master','admin'] %}
+            <a href="/consultas">📅 Agenda</a>
+            <a href="/agenda_calendario">📅 Calendário</a>
+            <a href="/pacientes/lista">👤 Pacientes</a>
+            <a href="/cadastro">➕ Cadastrar Paciente</a>
+            <a href="/usuarios">👥 Cadastrar Usuário</a>
+            <a href="/usuarios/lista">📋 Lista Usuários</a>
+            <a href="/dentistas">🦷 Dentistas</a>
+            <a href="/escala">⏰ Escala</a>
+            <a href="/dashboard">📊 Dashboard</a>
+        {% endif %}
+
+        {% if session.usuario_tipo == 'operador' %}
+            <a href="/consultas">📅 Agenda</a>
+            <a href="/agenda_calendario">📅 Calendário</a>
+            <a href="/pacientes/lista">👤 Pacientes</a>
+            <a href="/cadastro">➕ Cadastrar Paciente</a>
+            <a href="/escala">⏰ Escala</a>
+        {% endif %}
+
+        {% if session.usuario_tipo == 'atendente' %}
+            <a href="/consultas">📅 Agenda</a>
+            <a href="/agenda_calendario">📅 Calendário</a>
+            <a href="/pacientes/lista">👤 Pacientes</a>
+            <a href="/cadastro">➕ Cadastrar Paciente</a>
+        {% endif %}
+
+        {% if session.usuario_tipo == 'dentista' %}
+            <a href="/consultas">📅 Agenda</a>
+            <a href="/agenda_calendario">📅 Calendário</a>
+            <a href="/pacientes/lista">👤 Pacientes</a>
+        {% endif %}
+
+        {% if session.usuario_tipo == 'cliente' %}
+            <a href="/minha_area">📅 Minha Agenda</a>
+        {% endif %}
+
+        <a href="/logout">🚪 Sair</a>
+
+    </div>
+
+    <div class="content">
+
+        <!-- 🔔 NOTIFICAÇÕES -->
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="card">
+                {% for msg in messages %}
+                    <p>{{ msg }}</p>
+                {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Nova Escala</h2>
+
+<form method="POST" action="/escala/salvar">
+
+    <label>Dentista</label>
+    <select name="dentista_id">
+        {% for d in dentistas %}
+            <option value="{{ d.id }}">{{ d.nome }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Dia da Semana</label>
+    <select name="dia_semana">
+        <option>Segunda</option>
+        <option>Terça</option>
+        <option>Quarta</option>
+        <option>Quinta</option>
+        <option>Sexta</option>
+    </select>
+
+    <label>Hora Início</label>
+    <input type="time" name="hora_inicio">
+
+    <label>Hora Fim</label>
+    <input type="time" name="hora_fim">
+
+    <button type="submit">Salvar</button>
+
+</form>
+
+{% endblock %}

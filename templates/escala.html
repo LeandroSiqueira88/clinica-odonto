@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Escala dos Dentistas</h2>
+
+<a href="/escala/nova">+ Nova Escala</a>
+
+<table border="1">
+<tr>
+    <th>Dentista</th>
+    <th>Dia</th>
+    <th>Início</th>
+    <th>Fim</th>
+    <th>Ações</th>
+</tr>
+
+{% for e in escala %}
+<tr>
+    <td>{{ e.dentista_nome }}</td>
+    <td>{{ e.dia_semana }}</td>
+    <td>{{ e.hora_inicio }}</td>
+    <td>{{ e.hora_fim }}</td>
+    <td>
+        <a href="/escala/editar/{{ e.id }}">Editar</a>
+    </td>
+</tr>
+{% endfor %}
+
+</table>
+
+{% endblock %}

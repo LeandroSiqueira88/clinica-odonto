@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Editar Paciente</h2>
+
+<form method="POST" action="/pacientes/atualizar/{{ paciente.id }}">
+
+    <input name="nome" value="{{ paciente.nome }}">
+    <input name="cpf" value="{{ paciente.cpf }}">
+    <input name="telefone" value="{{ paciente.telefone }}">
+
+    <button type="submit">Salvar</button>
+
+</form>
+
+{% endblock %}

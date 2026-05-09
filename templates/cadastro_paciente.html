@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Cadastro de Paciente</h2>
+
+<form method="POST"
+action="{% if paciente %}/pacientes/atualizar/{{ paciente.id }}{% else %}/pacientes/salvar{% endif %}">
+
+    <input name="nome" placeholder="Nome completo"
+           value="{{ paciente.nome if paciente else '' }}" required>
+
+    <input type="date" name="data_nascimento" id="data_nascimento"
+           value="{{ paciente.data_nascimento if paciente else '' }}" required>
+
+    <p id="idade_texto"></p>
+
+    <select name="sexo">
+        <option value="">Sexo</option>
+        <option value="M" {% if paciente and paciente.sexo == 'M' %}selected{% endif %}>Masculino</option>
+        <option value="F" {% if paciente and paciente.sexo == 'F' %}selected{% endif %}>Feminino</option>
+    </select>
+
+    <input name="cpf" id="cpf" placeholder="CPF"
+           value="{{ paciente.cpf if paciente else '' }}">
+
+    <input name="telefone" placeholder="Telefone"
+           value="{{ paciente.telefone if paciente else '' }}">
+
+    <input name="email" placeholder="Email"
+           value="{{ paciente.email if paciente else '' }}">
+
+    <input name="cep" id="cep" placeholder="CEP"
+           value="{{ paciente.cep if paciente else '' }}">
+
+    <input name="logradouro" id="logradouro" placeholder="Rua"
+           value="{{ paciente.logradouro if paciente else '' }}">
+
+    <input name="bairro" id="bairro" placeholder="Bairro"
+           value="{{ paciente.bairro if paciente else '' }}">
+
+    <input name="cidade" id="cidade" placeholder="Cidade"
+           value="{{ paciente.cidade if paciente else '' }}">
+
+    <input name="estado" id="estado" placeholder="Estado"
+           value="{{ paciente.estado if paciente else '' }}">
+
+    <input name="numero" placeholder="Número"
+           value="{{ paciente.numero if paciente else '' }}">
+
+    <input name="complemento" placeholder="Complemento"
+           value="{{ paciente.complemento if paciente else '' }}">
+
+    <!-- 👶 RESPONSÁVEL -->
+    <div id="responsavel" style="display:none;">
+        <input name="responsavel_nome" placeholder="Responsável"
+               value="{{ paciente.responsavel_nome if paciente else '' }}">
+    </div>
+
+    <!-- 🔐 LOGIN (SÓ NO CADASTRO) -->
+    {% if not paciente %}
+    <h3>Acesso</h3>
+    <input name="email_login" placeholder="Email de acesso">
+    <input type="password" name="senha" placeholder="Senha">
+    {% endif %}
+
+    <button type="submit">Salvar</button>
+
+</form>
+
+<!-- 🔥 JavaScript -->
+<script>
+
+    function calcularIdade() {
+        const campo = document.getElementById('data_nascimento');
+        if (!campo.value) return;
+
+        const data = new Date(campo.value);
+        const hoje = new Date();
+
+        let idade = hoje.getFullYear() - data.getFullYear();
+        const mes = hoje.getMonth() - data.getMonth();
+
+        if (mes < 0 || (mes === 0 && hoje.getDate() < data.getDate())) {
+            idade--;
+        }
+
+        document.getElementById('idade_texto').innerText = "Idade: " + idade + " anos";
+
+        if (idade < 18) {
+            document.getElementById('responsavel').style.display = 'block';
+        } else {
+            document.getElementById('responsavel').style.display = 'none';
+        }
+    }
+
+    // 🔄 dispara ao alterar
+    document.getElementById('data_nascimento').addEventListener('change', calcularIdade);
+
+    // 🔄 dispara ao carregar (IMPORTANTE PARA EDIÇÃO)
+    window.onload = calcularIdade;
+
+
+    // 🔍 CEP automático
+    document.getElementById('cep').addEventListener('blur', function() {
+        const cep = this.value.replace(/\D/g, '');
+
+        if (cep.length === 8) {
+            fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.erro) {
+                        document.getElementById('logradouro').value = data.logradouro;
+                        document.getElementById('bairro').value = data.bairro;
+                        document.getElementById('cidade').value = data.localidade;
+                        document.getElementById('estado').value = data.uf;
+                    } else {
+                        alert("CEP não encontrado!");
+                    }
+                });
+        }
+    });
+
+
+    // 🔐 CPF simples
+    document.getElementById('cpf').addEventListener('blur', function() {
+        if (this.value.length < 11) {
+            alert("CPF inválido!");
+        }
+    });
+
+</script>
+
+{% endblock %}

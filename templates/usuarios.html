@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Cadastrar Usuário</h2>
+
+<form method="POST" action="/usuarios/salvar">
+
+    <input name="nome" placeholder="Nome" required>
+    <input name="email" placeholder="Email" required>
+    <input type="password" name="senha" placeholder="Senha" required>
+
+    <select name="tipo" required>
+        <option value="">Tipo</option>
+        <option value="admin">Admin</option>
+        <option value="atendente">Atendente</option>
+        <option value="operador">Operador</option>
+    </select>
+
+
+    <button type="submit">Salvar</button>
+
+</form>
+
+{% endblock %}
