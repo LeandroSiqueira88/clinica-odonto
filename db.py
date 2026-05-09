@@ -21,3 +21,6 @@ def is_postgres():
 def placeholder():
     """Retorna %s para postgres ou ? para sqlite"""
     return '%s' if is_postgres() else '?'
+
+
+### 
