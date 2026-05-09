@@ -1,10 +1,10 @@
 from flask import Flask
 import sqlite3
-
 from routes.auth import auth
 from routes.main import main
 from routes.pacientes import pacientes
 from routes.consultas import consultas
+from routes.dentistas import dentistas
 
 app = Flask(__name__)
 app.secret_key = 'segredo_super'
@@ -18,7 +18,6 @@ def init_db():
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # 👤 USUÁRIOS (COM ESPECIALIDADE E CRO)
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS usuarios (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -31,7 +30,6 @@ def init_db():
         )
     ''')
 
-    # 👥 PACIENTES
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS pacientes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -53,7 +51,6 @@ def init_db():
         )
     ''')
 
-    # 🦷 ANAMNESE
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS anamneses (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -66,7 +63,6 @@ def init_db():
         )
     ''')
 
-    # 📅 CONSULTAS
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS consultas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -79,7 +75,6 @@ def init_db():
         )
     ''')
 
-    # 🗓️ ESCALA
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS escala_dentistas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -101,18 +96,7 @@ def init_db():
         )
     ''')
 
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS prontuario (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            paciente_id INTEGER,
-            historico TEXT,
-            diagnostico TEXT,
-            tratamento TEXT,
-            data TEXT
-        )
-    ''')
-
-    # 👑 MASTER FIXO
+    # Master fixo
     cursor.execute("SELECT * FROM usuarios WHERE tipo = 'master'")
     if not cursor.fetchone():
         cursor.execute('''
@@ -127,8 +111,6 @@ app.register_blueprint(auth)
 app.register_blueprint(main)
 app.register_blueprint(pacientes)
 app.register_blueprint(consultas)
-from routes.dentistas import dentistas
-
 app.register_blueprint(dentistas)
 
 init_db()
