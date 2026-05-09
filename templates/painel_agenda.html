@@ -15,7 +15,7 @@
 
 {% for c in consultas %}
 <tr>
-    <td>{{ c.data }}</td>
+    <td>{{ c.data | formatar_data }}</td>
     <td>{{ c.hora }}</td>
     <td>{{ c.paciente }}</td>
     <td>{{ c.dentista }}</td>

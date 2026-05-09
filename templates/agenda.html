@@ -83,7 +83,7 @@
 {% for c in consultas %}
 <tr>
     <td>{{ c.id }}</td>
-    <td>{{ c.data }}</td>
+    <td>{{ c.data | formatar_data }}</td>
     <td>{{ c.hora }}</td>
     <td>{{ c.paciente }}</td>
     <td>{{ c.dentista }}</td>
@@ -95,6 +95,11 @@
         <a href="/consultas/status/{{ c.id }}/atendido" title="Atendido">🦷</a>
         <a href="/consultas/status/{{ c.id }}/faltou" title="Faltou">❌</a>
         <a href="/consultas/status/{{ c.id }}/cancelado" title="Cancelar">🚫</a>
+        {% if session.usuario_tipo in ['master','admin'] %}
+        <a href="/consultas/excluir/{{ c.id }}"
+           onclick="return confirm('Tem certeza que deseja EXCLUIR esta consulta?')"
+           title="Excluir" style="color:#e74c3c;">🗑️</a>
+        {% endif %}
     </td>
 </tr>
 {% endfor %}

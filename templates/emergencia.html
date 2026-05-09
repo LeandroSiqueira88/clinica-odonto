@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card" style="border-left: 5px solid #e74c3c;">
+    <h2 style="color:#e74c3c;">🚨 Atendimento de Emergência</h2>
+    <p style="color:#555;">Registre um atendimento emergencial. O paciente será atendido imediatamente.</p>
+</div>
+
+<div class="card" style="margin-top:20px;">
+<form method="POST" action="/emergencia/salvar">
+
+    <label>Paciente</label>
+    <select name="paciente_id" id="paciente_select" required>
+        <option value="">Selecione o paciente</option>
+        {% for p in pacientes %}
+            <option value="{{ p.id }}">{{ p.nome }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Dentista Disponível</label>
+    <select name="dentista_id" required>
+        <option value="">Selecione</option>
+        {% for d in dentistas %}
+            <option value="{{ d.id }}">{{ d.nome }} — {{ d.especialidade }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Procedimento de Emergência</label>
+    <select name="procedimento" required>
+        <option value="">Selecione</option>
+        <option>Dor de dente aguda</option>
+        <option>Abscesso dental</option>
+        <option>Fratura de dente</option>
+        <option>Sangramento gengival</option>
+        <option>Trauma facial</option>
+        <option>Dor pós-operatória</option>
+        <option>Extração de emergência</option>
+        <option>Outros</option>
+    </select>
+
+    <label>Observações</label>
+    <textarea name="observacoes" placeholder="Descreva a situação de emergência..." rows="3"></textarea>
+
+    <label>Data</label>
+    <input type="date" name="data" id="data_emerg" required>
+
+    <label>Hora</label>
+    <input type="time" name="hora" id="hora_emerg" required>
+
+    <br><br>
+    <button type="submit" style="background:#e74c3c; font-size:16px; padding:12px 24px;">
+        🚨 Registrar Emergência
+    </button>
+    <a href="/consultas" style="margin-left:15px; color:#aaa;">Cancelar</a>
+
+</form>
+</div>
+
+<script>
+// Preenche data e hora atual automaticamente
+window.addEventListener('DOMContentLoaded', function() {
+    const now = new Date();
+    const data = now.toISOString().split('T')[0];
+    const hora = now.toTimeString().substring(0,5);
+    document.getElementById('data_emerg').value = data;
+    document.getElementById('hora_emerg').value = hora;
+});
+</script>
+
+{% endblock %}

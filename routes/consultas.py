@@ -355,7 +355,15 @@ def dashboard_dados():
         por_dentista.append({'dentista': nome, 'especialidade': d['especialidade'] or '', 'hoje': h, 'semana': s, 'mes': m, 'ano': a, 'total': d['total'] or 0})
 
     conn.close()
-    return jsonify({'totais': totais, 'por_dia': {'labels': [d['data'] for d in por_dia_rows], 'valores': [d['total'] for d in por_dia_rows]}, 'por_dentista': por_dentista})
+    # Formatar datas para DD/MM/AAAA
+    def fmt(data_str):
+        try:
+            from datetime import datetime
+            return datetime.strptime(str(data_str)[:10], '%Y-%m-%d').strftime('%d/%m/%Y')
+        except:
+            return data_str
+
+    return jsonify({'totais': totais, 'por_dia': {'labels': [fmt(d['data']) for d in por_dia_rows], 'valores': [d['total'] for d in por_dia_rows]}, 'por_dentista': por_dentista})
 
 @consultas.route('/consultas/status/<int:id>/<status>')
 @tipo_required(['master', 'admin', 'operador', 'atendente'])
@@ -379,6 +387,47 @@ def detalhe_consulta(id):
     conn.close()
     if not c: return 'Consulta não encontrada'
     return render_template('consulta_detalhe.html', consulta=c)
+
+@consultas.route('/emergencia')
+@tipo_required(['master', 'admin', 'operador', 'atendente', 'dentista'])
+def emergencia():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM pacientes ORDER BY nome')
+    pacs = fetch_all(cur, cur.fetchall())
+    cur.execute("SELECT * FROM usuarios WHERE tipo = 'dentista' ORDER BY nome")
+    dents = fetch_all(cur, cur.fetchall())
+    conn.close()
+    return render_template('emergencia.html', pacientes=pacs, dentistas=dents)
+
+@consultas.route('/emergencia/salvar', methods=['POST'])
+@tipo_required(['master', 'admin', 'operador', 'atendente', 'dentista'])
+def salvar_emergencia():
+    dados = request.form
+    conn = get_db_connection()
+    cur = conn.cursor()
+    procedimento = f"🚨 EMERGÊNCIA: {dados['procedimento']}"
+    if dados.get('observacoes'):
+        procedimento += f" | {dados['observacoes']}"
+    cur.execute(
+        f'INSERT INTO consultas (paciente_id, dentista_id, data, hora, procedimento, status) VALUES ({p()},{p()},{p()},{p()},{p()},{p()})',
+        (dados['paciente_id'], dados['dentista_id'], dados['data'], dados['hora'], procedimento, 'confirmado')
+    )
+    conn.commit()
+    conn.close()
+    flash('🚨 Atendimento de emergência registrado!')
+    return redirect('/consultas')
+
+@consultas.route('/consultas/excluir/<int:id>')
+@tipo_required(['master', 'admin'])
+def excluir_consulta(id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute(f'DELETE FROM consultas WHERE id = {p()}', (id,))
+    conn.commit()
+    conn.close()
+    flash('Consulta excluída!')
+    return redirect('/consultas')
 
 @consultas.route('/consultas/mover', methods=['POST'])
 @tipo_required(['master', 'admin', 'operador', 'atendente'])

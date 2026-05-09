@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card" style="max-width:700px;">
+<h2>🦷 Novo Atendimento — {{ paciente.nome }}</h2>
+
+<form method="POST" action="/atendimento/salvar">
+    <input type="hidden" name="paciente_id" value="{{ paciente.id }}">
+
+    <label>Data do Atendimento</label>
+    <input type="date" name="data" id="data_atend" required>
+
+    <label>Queixa Principal</label>
+    <textarea name="queixa" placeholder="Descreva a queixa principal do paciente..." rows="2"></textarea>
+
+    <label>Diagnóstico</label>
+    <textarea name="diagnostico" placeholder="Diagnóstico clínico..." rows="2"></textarea>
+
+    <label>Tratamento Realizado</label>
+    <textarea name="tratamento" placeholder="Descreva o tratamento realizado na sessão..." rows="3" required></textarea>
+
+    <label>Prescrição / Medicamentos</label>
+    <textarea name="prescricao" placeholder="Medicamentos prescritos, dosagem..." rows="2"></textarea>
+
+    <label>Observações</label>
+    <textarea name="observacoes" placeholder="Observações adicionais..." rows="2"></textarea>
+
+    <label>Data de Retorno</label>
+    <input type="date" name="retorno">
+
+    <br><br>
+    <button type="submit">💾 Salvar Atendimento</button>
+    <a href="/pacientes/ficha/{{ paciente.id }}" style="margin-left:15px; color:#aaa;">Cancelar</a>
+</form>
+</div>
+
+<script>
+document.getElementById('data_atend').value = new Date().toISOString().split('T')[0];
+</script>
+
+{% endblock %}

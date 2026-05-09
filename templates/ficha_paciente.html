@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:20px;">
+    <h2>📋 Ficha do Paciente</h2>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        {% if session.usuario_tipo in ['master','admin'] %}
+        <a href="/pacientes/editar/{{ paciente.id }}" style="padding:8px 14px; background:#0f4c81; color:white; border-radius:6px; text-decoration:none;">✏️ Editar</a>
+        {% endif %}
+        <a href="/pacientes/anamnese/{{ paciente.id }}" style="padding:8px 14px; background:#27ae60; color:white; border-radius:6px; text-decoration:none;">🧠 Anamnese</a>
+        <a href="/prontuario/{{ paciente.id }}" style="padding:8px 14px; background:#8e44ad; color:white; border-radius:6px; text-decoration:none;">📖 Prontuário</a>
+        {% if session.usuario_tipo in ['master','admin','operador','atendente'] %}
+        <a href="/consultas/nova?paciente_id={{ paciente.id }}" style="padding:8px 14px; background:#e67e22; color:white; border-radius:6px; text-decoration:none;">📅 Agendar</a>
+        {% endif %}
+        <a href="/pacientes/lista" style="padding:8px 14px; background:#aaa; color:white; border-radius:6px; text-decoration:none;">← Voltar</a>
+    </div>
+</div>
+
+<!-- DADOS PESSOAIS -->
+<div class="card" style="margin-bottom:20px;">
+    <h3 style="color:#0f4c81; border-bottom:2px solid #eee; padding-bottom:8px;">👤 Dados Pessoais</h3>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px;">
+        <div><b>Nome:</b><br>{{ paciente.nome }}</div>
+        <div><b>Data de Nascimento:</b><br>{{ paciente.data_nascimento | formatar_data if paciente.data_nascimento else '—' }}</div>
+        <div><b>Sexo:</b><br>{{ 'Masculino' if paciente.sexo == 'M' else 'Feminino' if paciente.sexo == 'F' else '—' }}</div>
+        <div><b>CPF:</b><br>{{ paciente.cpf or '—' }}</div>
+        <div><b>Telefone:</b><br>{{ paciente.telefone or '—' }}</div>
+        <div><b>Email:</b><br>{{ paciente.email or '—' }}</div>
+        {% if paciente.responsavel_nome %}
+        <div><b>Responsável:</b><br>{{ paciente.responsavel_nome }}</div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ENDEREÇO -->
+<div class="card" style="margin-bottom:20px;">
+    <h3 style="color:#0f4c81; border-bottom:2px solid #eee; padding-bottom:8px;">📍 Endereço</h3>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px;">
+        <div><b>Logradouro:</b><br>{{ paciente.logradouro or '—' }}, {{ paciente.numero or '' }}</div>
+        <div><b>Bairro:</b><br>{{ paciente.bairro or '—' }}</div>
+        <div><b>Cidade/Estado:</b><br>{{ paciente.cidade or '—' }}/{{ paciente.estado or '—' }}</div>
+        <div><b>CEP:</b><br>{{ paciente.cep or '—' }}</div>
+        {% if paciente.complemento %}
+        <div><b>Complemento:</b><br>{{ paciente.complemento }}</div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- HISTÓRICO DE CONSULTAS -->
+<div class="card" style="margin-bottom:20px;">
+    <h3 style="color:#0f4c81; border-bottom:2px solid #eee; padding-bottom:8px;">📅 Histórico de Consultas</h3>
+    {% if consultas %}
+    <table>
+        <tr>
+            <th>Data</th><th>Hora</th><th>Dentista</th><th>Procedimento</th><th>Status</th>
+        </tr>
+        {% for c in consultas %}
+        <tr>
+            <td>{{ c.data | formatar_data }}</td>
+            <td>{{ c.hora }}</td>
+            <td>{{ c.dentista_nome }}</td>
+            <td>{{ c.procedimento }}</td>
+            <td class="status-{{ c.status }}">{{ c.status }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p style="color:#999;">Nenhuma consulta registrada.</p>
+    {% endif %}
+</div>
+
+<!-- ATENDIMENTOS (FICHA DO DIA) -->
+<div class="card" style="margin-bottom:20px;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="color:#0f4c81; border-bottom:2px solid #eee; padding-bottom:8px; flex:1;">🦷 Ficha de Atendimentos</h3>
+        {% if session.usuario_tipo in ['master','admin','dentista'] %}
+        <a href="/atendimento/novo/{{ paciente.id }}" style="padding:7px 14px; background:#0f4c81; color:white; border-radius:6px; text-decoration:none; margin-left:10px;">➕ Novo Atendimento</a>
+        {% endif %}
+    </div>
+    {% if atendimentos %}
+        {% for a in atendimentos %}
+        <div style="border-left:4px solid #0f4c81; padding:12px 16px; margin:12px 0; background:#f9fbff; border-radius:0 8px 8px 0;">
+            <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:4px;">
+                <strong>{{ a.data | formatar_data }}</strong>
+                <span style="color:#888; font-size:13px;">Dr(a). {{ a.dentista_nome }}</span>
+            </div>
+            {% if a.queixa %}<p style="margin:6px 0;"><b>Queixa:</b> {{ a.queixa }}</p>{% endif %}
+            {% if a.diagnostico %}<p style="margin:6px 0;"><b>Diagnóstico:</b> {{ a.diagnostico }}</p>{% endif %}
+            {% if a.tratamento %}<p style="margin:6px 0;"><b>Tratamento realizado:</b> {{ a.tratamento }}</p>{% endif %}
+            {% if a.prescricao %}<p style="margin:6px 0;"><b>Prescrição:</b> {{ a.prescricao }}</p>{% endif %}
+            {% if a.observacoes %}<p style="margin:6px 0;"><b>Observações:</b> {{ a.observacoes }}</p>{% endif %}
+            {% if a.retorno %}<p style="margin:6px 0;"><b>Retorno:</b> {{ a.retorno | formatar_data }}</p>{% endif %}
+        </div>
+        {% endfor %}
+    {% else %}
+    <p style="color:#999;">Nenhum atendimento registrado.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

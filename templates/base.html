@@ -139,6 +139,10 @@
             <a href="/cadastro">➕ Cadastrar Paciente</a>
         {% endif %}
 
+        {% if session.usuario_tipo in ['master','admin','operador','atendente','dentista'] %}
+            <a href="/emergencia" style="color:#ff6b6b; font-weight:bold;">🚨 Emergência</a>
+        {% endif %}
+
         {% if session.usuario_tipo in ['master','admin'] %}
             <a href="/usuarios">👥 Cadastrar Usuário</a>
             <a href="/usuarios/lista">📋 Lista Usuários</a>

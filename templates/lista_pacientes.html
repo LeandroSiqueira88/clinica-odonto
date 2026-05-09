@@ -1,36 +1,48 @@
 {% extends "base.html" %}
-
 {% block content %}
 
-<h2>Pacientes</h2>
+<h2>👤 Pacientes</h2>
 
-<form method="GET">
-    <input name="busca" placeholder="Buscar..." value="{{ busca }}">
-    <button type="submit">Buscar</button>
-    <a href="/pacientes/lista">Limpar</a>
+<form method="GET" style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; margin-bottom:20px;">
+    <div>
+        <label>Buscar</label>
+        <input name="busca" placeholder="Nome, CPF..." value="{{ busca }}" style="width:220px;">
+    </div>
+    <div style="display:flex; gap:8px;">
+        <button type="submit">🔍 Buscar</button>
+        <a href="/pacientes/lista" style="padding:10px 15px; background:#aaa; color:white; border-radius:6px; text-decoration:none;">✖ Limpar</a>
+    </div>
 </form>
 
-<table border="1">
+<table>
 <tr>
     <th>Nome</th>
     <th>CPF</th>
+    <th>Telefone</th>
+    <th>Cidade</th>
     <th>Ações</th>
 </tr>
 
 {% for p in pacientes %}
 <tr>
-    <td>{{ p.nome }}</td>
-    <td>{{ p.cpf }}</td>
+    <td><a href="/pacientes/ficha/{{ p.id }}" style="color:#0f4c81; font-weight:bold; text-decoration:none;">{{ p.nome }}</a></td>
+    <td>{{ p.cpf or '—' }}</td>
+    <td>{{ p.telefone or '—' }}</td>
+    <td>{{ p.cidade or '—' }}</td>
     <td>
-        <a href="/pacientes/editar/{{ p.id }}">Editar</a>
-        <a href="/pacientes/anamnese/{{ p.id }}">Anamnese</a>
-
+        <a href="/pacientes/ficha/{{ p.id }}" title="Ficha">📋</a>
+        <a href="/pacientes/anamnese/{{ p.id }}" title="Anamnese">🧠</a>
         {% if session.usuario_tipo in ['master','admin'] %}
-        <a href="/pacientes/excluir/{{ p.id }}" onclick="return confirm('Tem certeza?')">Excluir</a>
+        <a href="/pacientes/editar/{{ p.id }}" title="Editar">✏️</a>
+        <a href="/pacientes/excluir/{{ p.id }}" onclick="return confirm('Excluir paciente?')" title="Excluir" style="color:#e74c3c;">🗑️</a>
         {% endif %}
     </td>
 </tr>
 {% endfor %}
+
+{% if not pacientes %}
+<tr><td colspan="5" style="text-align:center; color:#999; padding:20px;">Nenhum paciente encontrado.</td></tr>
+{% endif %}
 
 </table>
 

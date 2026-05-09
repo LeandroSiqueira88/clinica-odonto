@@ -1,6 +1,15 @@
-from flask import Blueprint, render_template, request, redirect, flash
+from flask import Blueprint, render_template, request, redirect, flash, session
 from db import get_db_connection, is_postgres
 from routes.utils import tipo_required, row_as_dict, rows_as_dicts
+
+def fetch_one(cur, row):
+    from db import is_postgres
+    return row_as_dict(row, cur) if is_postgres() else row
+
+def fetch_all(cur, rows):
+    from routes.utils import rows_as_dicts
+    from db import is_postgres
+    return rows_as_dicts(rows, cur) if is_postgres() else rows
 
 pacientes = Blueprint('pacientes', __name__)
 
@@ -20,16 +29,29 @@ def salvar_paciente():
     senha = dados.get('senha', '').strip()
     usuario_id = None
 
+    # Verificar se email já existe antes de tentar inserir
+    if email_login:
+        cur.execute(f'SELECT id FROM usuarios WHERE email = {p()}', (email_login,))
+        if cur.fetchone():
+            conn.close()
+            flash('Este email de acesso já está cadastrado. Use outro email ou deixe em branco.')
+            return redirect('/cadastro')
+
     if email_login and senha:
-        cur.execute(
-            f'INSERT INTO usuarios (nome, email, senha, tipo) VALUES ({p()},{p()},{p()},{p()})',
-            (dados.get('nome'), email_login, senha, 'cliente')
-        )
-        if is_postgres():
-            cur.execute('SELECT lastval()')
-            usuario_id = cur.fetchone()[0]
-        else:
-            usuario_id = cur.lastrowid
+        try:
+            cur.execute(
+                f'INSERT INTO usuarios (nome, email, senha, tipo) VALUES ({p()},{p()},{p()},{p()})',
+                (dados.get('nome'), email_login, senha, 'cliente')
+            )
+            if is_postgres():
+                cur.execute('SELECT lastval()')
+                usuario_id = cur.fetchone()[0]
+            else:
+                usuario_id = cur.lastrowid
+        except Exception:
+            conn.close()
+            flash('Este email de acesso já está cadastrado. Use outro email ou deixe em branco.')
+            return redirect('/cadastro')
 
     cur.execute(f'''
         INSERT INTO pacientes (usuario_id, nome, data_nascimento, sexo, cpf, telefone, email,
@@ -44,7 +66,7 @@ def salvar_paciente():
     conn.commit()
     conn.close()
     flash('Paciente cadastrado com sucesso!')
-    return redirect('/login')
+    return redirect('/pacientes/lista')
 
 @pacientes.route('/pacientes/lista')
 @tipo_required(['master', 'admin', 'operador', 'atendente', 'dentista'])
@@ -181,3 +203,52 @@ def salvar_anamnese():
     conn.commit()
     conn.close()
     return redirect('/pacientes/lista')
+
+
+@pacientes.route('/pacientes/ficha/<int:id>')
+@tipo_required(['master', 'admin', 'operador', 'atendente', 'dentista'])
+def ficha_paciente(id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute(f'SELECT * FROM pacientes WHERE id = {p()}', (id,))
+    pac = fetch_one(cur, cur.fetchone())
+
+    cur.execute(f'''SELECT c.*, u.nome as dentista_nome FROM consultas c
+        LEFT JOIN usuarios u ON u.id = c.dentista_id
+        WHERE c.paciente_id = {p()} ORDER BY c.data DESC, c.hora DESC''', (id,))
+    consultas = fetch_all(cur, cur.fetchall())
+
+    cur.execute(f'''SELECT a.*, u.nome as dentista_nome FROM atendimentos a
+        LEFT JOIN usuarios u ON u.id = a.dentista_id
+        WHERE a.paciente_id = {p()} ORDER BY a.data DESC''', (id,))
+    atendimentos = fetch_all(cur, cur.fetchall())
+
+    conn.close()
+    return render_template('ficha_paciente.html', paciente=pac, consultas=consultas, atendimentos=atendimentos)
+
+@pacientes.route('/atendimento/novo/<int:id>')
+@tipo_required(['master', 'admin', 'dentista'])
+def novo_atendimento(id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute(f'SELECT * FROM pacientes WHERE id = {p()}', (id,))
+    pac = fetch_one(cur, cur.fetchone())
+    conn.close()
+    return render_template('novo_atendimento.html', paciente=pac)
+
+@pacientes.route('/atendimento/salvar', methods=['POST'])
+@tipo_required(['master', 'admin', 'dentista'])
+def salvar_atendimento():
+    dados = request.form
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute(f'''INSERT INTO atendimentos
+        (paciente_id, dentista_id, data, queixa, diagnostico, tratamento, prescricao, observacoes, retorno)
+        VALUES ({p()},{p()},{p()},{p()},{p()},{p()},{p()},{p()},{p()})''',
+        (dados['paciente_id'], session.get('usuario_id'), dados['data'],
+         dados.get('queixa'), dados.get('diagnostico'), dados.get('tratamento'),
+         dados.get('prescricao'), dados.get('observacoes'), dados.get('retorno') or None))
+    conn.commit()
+    conn.close()
+    flash('Atendimento registrado com sucesso!')
+    return redirect(f"/pacientes/ficha/{dados['paciente_id']}")

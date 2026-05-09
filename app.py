@@ -10,6 +10,20 @@ from routes.perfil import perfil
 app = Flask(__name__)
 app.secret_key = 'segredo_super'
 
+# Filtro para formatar datas no formato DD/MM/AAAA
+@app.template_filter('formatar_data')
+def formatar_data(valor):
+    if not valor:
+        return '—'
+    try:
+        from datetime import datetime
+        if '/' in str(valor):
+            return valor
+        dt = datetime.strptime(str(valor)[:10], '%Y-%m-%d')
+        return dt.strftime('%d/%m/%Y')
+    except:
+        return valor
+
 app.register_blueprint(auth)
 app.register_blueprint(main)
 app.register_blueprint(pacientes)
