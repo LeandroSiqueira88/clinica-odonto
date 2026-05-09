@@ -20,3 +20,17 @@ def tipo_required(tipos_permitidos):
             return func(*args, **kwargs)
         return wrapper
     return decorator
+
+def rows_as_dicts(rows, cursor):
+    """Converte rows do psycopg2 para lista de dicts acessíveis por nome"""
+    if not rows:
+        return []
+    cols = [desc[0] for desc in cursor.description]
+    return [dict(zip(cols, row)) for row in rows]
+
+def row_as_dict(row, cursor):
+    """Converte uma row do psycopg2 para dict"""
+    if not row:
+        return None
+    cols = [desc[0] for desc in cursor.description]
+    return dict(zip(cols, row))
