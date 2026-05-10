@@ -61,10 +61,23 @@ def init_db():
         f'''CREATE TABLE IF NOT EXISTS prontuario (
             id {pk}, paciente_id INTEGER, historico TEXT,
             diagnostico TEXT, tratamento TEXT, data TEXT)''',
+        f'''CREATE TABLE IF NOT EXISTS atendimentos (
+            id {pk}, paciente_id INTEGER, dentista_id INTEGER,
+            data TEXT, queixa TEXT, diagnostico TEXT, tratamento TEXT,
+            prescricao TEXT, observacoes TEXT, retorno TEXT)''',
     ]
 
     for sql in tables:
         cursor.execute(sql)
+
+    # Colunas extras na anamnese
+    if is_postgres():
+        for col in ['tratamento_medico','tratamento_anterior','sensibilidade',
+                    'bruxismo','sangramento','protese','habitos','doencas_outras']:
+            try:
+                cursor.execute(f'ALTER TABLE anamneses ADD COLUMN IF NOT EXISTS {col} TEXT')
+            except:
+                pass
 
     cursor.execute("SELECT * FROM usuarios WHERE tipo = 'master'")
     if not cursor.fetchone():
