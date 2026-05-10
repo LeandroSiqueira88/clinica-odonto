@@ -37,41 +37,139 @@
 {% endif %}
 </div>
 
-<!-- DICAS DE SAÚDE BUCAL -->
+<!-- CARROSSEL DE DICAS -->
 <h3 style="color:#0f4c81; margin-bottom:16px;">💡 Dicas de Saúde Bucal</h3>
-<div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; margin-bottom:30px;">
 
-    <div class="card" style="border-left:5px solid #0f4c81;">
-        <h4>🪥 Escove 3x ao dia</h4>
-        <p>Escove os dentes após cada refeição principal por pelo menos 2 minutos com creme dental com flúor.</p>
+<div style="position:relative; overflow:hidden; border-radius:12px; margin-bottom:30px; min-height:160px;" id="carrossel">
+
+    <!-- Cards -->
+    <div class="card-dica" style="border-left:5px solid #0f4c81; background:white; padding:24px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <h3 style="color:#0f4c81; margin:0 0 10px;">🪥 Escove 3x ao dia</h3>
+        <p style="margin:0; color:#555;">Escove os dentes após cada refeição principal por pelo menos 2 minutos com creme dental com flúor. Uma boa escovação remove a placa bacteriana que causa cáries.</p>
     </div>
-    <div class="card" style="border-left:5px solid #27ae60;">
-        <h4>🧵 Use o fio dental</h4>
-        <p>O fio dental remove resíduos entre os dentes onde a escova não alcança, prevenindo cáries e gengivite.</p>
+
+    <div class="card-dica" style="border-left:5px solid #27ae60; background:white; padding:24px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <h3 style="color:#27ae60; margin:0 0 10px;">🧵 Use o fio dental diariamente</h3>
+        <p style="margin:0; color:#555;">O fio dental remove resíduos entre os dentes onde a escova não alcança. Use pelo menos uma vez por dia para prevenir cáries interdentais e gengivite.</p>
     </div>
-    <div class="card" style="border-left:5px solid #e67e22;">
-        <h4>💧 Beba bastante água</h4>
-        <p>A água ajuda a eliminar resíduos de alimentos e bactérias, mantendo a saúde bucal em dia.</p>
+
+    <div class="card-dica" style="border-left:5px solid #e67e22; background:white; padding:24px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <h3 style="color:#e67e22; margin:0 0 10px;">💧 Beba bastante água</h3>
+        <p style="margin:0; color:#555;">A água ajuda a eliminar resíduos de alimentos e bactérias da boca. Prefira água fluoretada — ela fortalece o esmalte dentário e protege contra cáries.</p>
     </div>
-    <div class="card" style="border-left:5px solid #8e44ad;">
-        <h4>🍬 Evite açúcar em excesso</h4>
-        <p>O açúcar alimenta as bactérias que causam cáries. Prefira frutas e reduza doces e refrigerantes.</p>
+
+    <div class="card-dica" style="border-left:5px solid #8e44ad; background:white; padding:24px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <h3 style="color:#8e44ad; margin:0 0 10px;">🍬 Evite açúcar em excesso</h3>
+        <p style="margin:0; color:#555;">O açúcar alimenta as bactérias que produzem ácidos e causam cáries. Reduza doces, refrigerantes e sucos industrializados. Prefira frutas naturais!</p>
     </div>
-    <div class="card" style="border-left:5px solid #e74c3c;">
-        <h4>🚭 Não fume</h4>
-        <p>O tabaco mancha os dentes, causa mau hálito, gengivite e aumenta o risco de câncer bucal.</p>
+
+    <div class="card-dica" style="border-left:5px solid #e74c3c; background:white; padding:24px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <h3 style="color:#e74c3c; margin:0 0 10px;">🚭 Não fume</h3>
+        <p style="margin:0; color:#555;">O tabaco mancha os dentes, causa mau hálito, reduz a circulação nas gengivas e aumenta significativamente o risco de câncer bucal e perda dentária.</p>
     </div>
-    <div class="card" style="border-left:5px solid #2980b9;">
-        <h4>📅 Consulte seu dentista</h4>
-        <p>Visite o dentista a cada 6 meses. Problemas detectados cedo são mais fáceis de tratar.</p>
+
+    <div class="card-dica" style="border-left:5px solid #2980b9; background:white; padding:24px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <h3 style="color:#2980b9; margin:0 0 10px;">📅 Consulte seu dentista regularmente</h3>
+        <p style="margin:0; color:#555;">Visite o dentista a cada 6 meses para limpeza e prevenção. Problemas detectados cedo são mais simples e baratos de tratar. Não espere a dor aparecer!</p>
     </div>
+
+    <div class="card-dica" style="border-left:5px solid #16a085; background:white; padding:24px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <h3 style="color:#16a085; margin:0 0 10px;">😴 Cuidado com o bruxismo</h3>
+        <p style="margin:0; color:#555;">Apertar ou ranger os dentes durante o sono desgasta o esmalte e pode causar dores na mandíbula. Consulte seu dentista sobre o uso de uma placa de proteção.</p>
+    </div>
+
+    <div class="card-dica" style="border-left:5px solid #f39c12; background:white; padding:24px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <h3 style="color:#f39c12; margin:0 0 10px;">🥦 Alimentação que protege os dentes</h3>
+        <p style="margin:0; color:#555;">Alimentos ricos em cálcio como leite, queijo e vegetais fortalecem os dentes. Frutas e legumes crus ajudam a limpar naturalmente a superfície dos dentes.</p>
+    </div>
+
+    <div class="card-dica" style="border-left:5px solid #1abc9c; background:white; padding:24px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <h3 style="color:#1abc9c; margin:0 0 10px;">👶 Saúde bucal começa cedo</h3>
+        <p style="margin:0; color:#555;">Hábitos saudáveis desde a infância fazem toda a diferença. Limpe as gengivas do bebê e leve ao dentista assim que o primeiro dentinho nascer.</p>
+    </div>
+
+    <div class="card-dica" style="border-left:5px solid #c0392b; background:white; padding:24px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <h3 style="color:#c0392b; margin:0 0 10px;">🔬 Você sabia?</h3>
+        <p style="margin:0; color:#555;">O esmalte dentário é o tecido mais duro do corpo humano — mais resistente que os ossos! Mesmo assim, ele não se regenera, por isso a prevenção é a melhor proteção.</p>
+    </div>
+
+    <div class="card-dica" style="border-left:5px solid #7f8c8d; background:white; padding:24px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <h3 style="color:#7f8c8d; margin:0 0 10px;">🏃 Saúde geral = saúde bucal</h3>
+        <p style="margin:0; color:#555;">Doenças como diabetes e hipertensão afetam diretamente a saúde da gengiva. Cuide do seu corpo por completo e informe sempre seu dentista sobre suas condições de saúde.</p>
+    </div>
+
+    <div class="card-dica" style="border-left:5px solid #d35400; background:white; padding:24px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <h3 style="color:#d35400; margin:0 0 10px;">🧴 Enxaguante bucal</h3>
+        <p style="margin:0; color:#555;">O enxaguante bucal com flúor é um aliado extra na proteção dos dentes. Use após a escovação para alcançar áreas difíceis e reduzir bactérias na boca.</p>
+    </div>
+
+    <!-- Indicadores -->
+    <div id="indicadores" style="text-align:center; margin-top:16px; padding:8px;"></div>
+
+    <!-- Botões de navegação -->
+    <button onclick="anteriorCard()" style="position:absolute; left:8px; top:50%; transform:translateY(-50%); background:rgba(15,76,129,0.8); color:white; border:none; border-radius:50%; width:36px; height:36px; font-size:18px; cursor:pointer; z-index:10;">‹</button>
+    <button onclick="proximoCard()" style="position:absolute; right:8px; top:50%; transform:translateY(-50%); background:rgba(15,76,129,0.8); color:white; border:none; border-radius:50%; width:36px; height:36px; font-size:18px; cursor:pointer; z-index:10;">›</button>
 
 </div>
 
-<!-- CURIOSIDADE -->
-<div class="card" style="background:#eaf4fb; border-left:5px solid #0f4c81;">
-    <h4>🔬 Você sabia?</h4>
-    <p>O esmalte dentário é o tecido mais duro do corpo humano — mais resistente que os ossos! Mesmo assim, ele não se regenera, por isso a prevenção é essencial.</p>
-</div>
+<style>
+.card-dica {
+    display: none;
+    animation: fadeIn 0.5s ease;
+}
+.card-dica.ativo {
+    display: block;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.indicador {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #ddd;
+    margin: 0 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.indicador.ativo { background: #0f4c81; }
+</style>
+
+<script>
+const cards = document.querySelectorAll('.card-dica');
+const container = document.getElementById('indicadores');
+let atual = 0;
+let timer;
+
+// Criar indicadores
+cards.forEach((_, i) => {
+    const dot = document.createElement('span');
+    dot.className = 'indicador' + (i === 0 ? ' ativo' : '');
+    dot.onclick = () => irPara(i);
+    container.appendChild(dot);
+});
+
+function irPara(n) {
+    cards[atual].classList.remove('ativo');
+    document.querySelectorAll('.indicador')[atual].classList.remove('ativo');
+    atual = (n + cards.length) % cards.length;
+    cards[atual].classList.add('ativo');
+    document.querySelectorAll('.indicador')[atual].classList.add('ativo');
+    reiniciarTimer();
+}
+
+function proximoCard() { irPara(atual + 1); }
+function anteriorCard() { irPara(atual - 1); }
+
+function reiniciarTimer() {
+    clearInterval(timer);
+    timer = setInterval(proximoCard, 5000);
+}
+
+// Iniciar
+cards[0].classList.add('ativo');
+reiniciarTimer();
+</script>
 
 {% endblock %}
