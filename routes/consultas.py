@@ -380,7 +380,8 @@ def atualizar_status(id, status):
 def detalhe_consulta(id):
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute(f'''SELECT c.*, p.nome as paciente, u.nome as dentista
+    cur.execute(f'''SELECT c.*, p.nome as paciente, p.telefone as telefone_paciente,
+        p.id as paciente_ficha_id, u.nome as dentista, u.especialidade as dentista_especialidade
         FROM consultas c LEFT JOIN pacientes p ON p.id = c.paciente_id
         LEFT JOIN usuarios u ON u.id = c.dentista_id WHERE c.id = {p()}''', (id,))
     c = fetch_one(cur, cur.fetchone())

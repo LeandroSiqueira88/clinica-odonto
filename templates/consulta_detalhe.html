@@ -1,21 +1,60 @@
 {% extends "base.html" %}
-
 {% block content %}
 
-<div class="card">
+<a href="/consultas" style="display:inline-block; padding:7px 16px; background:#6c757d; color:white; border-radius:6px; text-decoration:none; margin-bottom:16px; font-size:14px;">← Agenda</a>
 
-<h2>Consulta</h2>
+<div class="card" style="max-width:650px;">
 
-<p><b>Paciente:</b> {{ consulta.paciente }}</p>
-<p><b>Dentista:</b> {{ consulta.dentista }}</p>
-<p><b>Data:</b> {{ consulta.data | formatar_data }}</p>
-<p><b>Hora:</b> {{ consulta.hora }}</p>
-<p><b>Procedimento:</b> {{ consulta.procedimento }}</p>
-<p><b>Status:</b> {{ consulta.status }}</p>
+<h2>🦷 Detalhe da Consulta #{{ consulta.id }}</h2>
 
-<a href="/pacientes/anamnese/{{ consulta.paciente_id }}">
-    🧠 Ver Anamnese
-</a>
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;">
+
+    <div style="background:#f9fbff; padding:14px; border-radius:8px; border-left:4px solid #0f4c81;">
+        <div style="color:#888; font-size:13px; margin-bottom:4px;">👤 Paciente</div>
+        <div style="font-weight:bold; font-size:16px;">{{ consulta.paciente }}</div>
+        {% if consulta.telefone_paciente %}
+        <div style="margin-top:6px;">
+            📞 <a href="tel:{{ consulta.telefone_paciente }}" style="color:#0f4c81;">{{ consulta.telefone_paciente }}</a>
+        </div>
+        {% endif %}
+        <div style="margin-top:6px;">
+            <a href="/pacientes/ficha/{{ consulta.paciente_ficha_id }}" style="font-size:13px; color:#0f4c81;">📋 Ver ficha</a>
+        </div>
+    </div>
+
+    <div style="background:#f9fbff; padding:14px; border-radius:8px; border-left:4px solid #27ae60;">
+        <div style="color:#888; font-size:13px; margin-bottom:4px;">🦷 Dentista</div>
+        <div style="font-weight:bold; font-size:16px;">{{ consulta.dentista }}</div>
+        {% if consulta.dentista_especialidade %}
+        <div style="color:#555; font-size:13px; margin-top:4px;">{{ consulta.dentista_especialidade }}</div>
+        {% endif %}
+    </div>
+
+    <div style="background:#f9fbff; padding:14px; border-radius:8px; border-left:4px solid #e67e22;">
+        <div style="color:#888; font-size:13px; margin-bottom:4px;">📅 Data e Hora</div>
+        <div style="font-weight:bold;">{{ consulta.data | formatar_data }} às {{ consulta.hora }}</div>
+    </div>
+
+    <div style="background:#f9fbff; padding:14px; border-radius:8px; border-left:4px solid #8e44ad;">
+        <div style="color:#888; font-size:13px; margin-bottom:4px;">🔧 Procedimento</div>
+        <div style="font-weight:bold;">{{ consulta.procedimento }}</div>
+    </div>
+
+</div>
+
+<div style="margin-top:16px; background:#f9fbff; padding:14px; border-radius:8px; border-left:4px solid #2980b9;">
+    <div style="color:#888; font-size:13px; margin-bottom:4px;">📊 Status</div>
+    <span class="status-{{ consulta.status }}" style="font-size:16px; font-weight:bold;">{{ consulta.status }}</span>
+</div>
+
+{% if session.usuario_tipo in ['master','admin','operador','atendente'] %}
+<div style="margin-top:20px; display:flex; gap:8px; flex-wrap:wrap;">
+    <a href="/consultas/status/{{ consulta.id }}/confirmado" style="padding:8px 14px; background:#27ae60; color:white; border-radius:6px; text-decoration:none;">✔ Confirmar</a>
+    <a href="/consultas/status/{{ consulta.id }}/atendido" style="padding:8px 14px; background:#0f4c81; color:white; border-radius:6px; text-decoration:none;">🦷 Atendido</a>
+    <a href="/consultas/status/{{ consulta.id }}/faltou" style="padding:8px 14px; background:#e67e22; color:white; border-radius:6px; text-decoration:none;">❌ Faltou</a>
+    <a href="/consultas/status/{{ consulta.id }}/cancelado" style="padding:8px 14px; background:#e74c3c; color:white; border-radius:6px; text-decoration:none;">🚫 Cancelar</a>
+</div>
+{% endif %}
 
 </div>
 

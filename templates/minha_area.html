@@ -1,13 +1,19 @@
 {% extends "base.html" %}
-
 {% block content %}
 
-<div class="card">
+<h2>👋 Olá, {{ session.usuario_nome }}!</h2>
 
-<h2>Minha Área</h2>
-<a href="/minha_area/nova_consulta">Agendar Consulta</a>
-<h3>Minhas Consultas</h3>
+<!-- AÇÕES RÁPIDAS -->
+<div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:24px;">
+    <a href="/minha_area/nova_consulta" style="padding:10px 20px; background:#0f4c81; color:white; border-radius:8px; text-decoration:none; font-weight:bold;">📅 Agendar Consulta</a>
+    <a href="/minha_area/minha_anamnese" style="padding:10px 20px; background:#27ae60; color:white; border-radius:8px; text-decoration:none; font-weight:bold;">🧠 Minha Anamnese</a>
+</div>
 
+<!-- MINHAS CONSULTAS -->
+<div class="card" style="margin-bottom:24px;">
+<h3 style="color:#0f4c81; border-bottom:2px solid #eee; padding-bottom:8px;">📅 Minhas Consultas</h3>
+
+{% if consultas %}
 <table>
 <tr>
     <th>Data</th>
@@ -16,7 +22,6 @@
     <th>Procedimento</th>
     <th>Status</th>
 </tr>
-
 {% for c in consultas %}
 <tr>
     <td>{{ c.data | formatar_data }}</td>
@@ -26,9 +31,47 @@
     <td class="status-{{ c.status }}">{{ c.status }}</td>
 </tr>
 {% endfor %}
-
 </table>
+{% else %}
+<p style="color:#999;">Nenhuma consulta agendada ainda.</p>
+{% endif %}
+</div>
 
+<!-- DICAS DE SAÚDE BUCAL -->
+<h3 style="color:#0f4c81; margin-bottom:16px;">💡 Dicas de Saúde Bucal</h3>
+<div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; margin-bottom:30px;">
+
+    <div class="card" style="border-left:5px solid #0f4c81;">
+        <h4>🪥 Escove 3x ao dia</h4>
+        <p>Escove os dentes após cada refeição principal por pelo menos 2 minutos com creme dental com flúor.</p>
+    </div>
+    <div class="card" style="border-left:5px solid #27ae60;">
+        <h4>🧵 Use o fio dental</h4>
+        <p>O fio dental remove resíduos entre os dentes onde a escova não alcança, prevenindo cáries e gengivite.</p>
+    </div>
+    <div class="card" style="border-left:5px solid #e67e22;">
+        <h4>💧 Beba bastante água</h4>
+        <p>A água ajuda a eliminar resíduos de alimentos e bactérias, mantendo a saúde bucal em dia.</p>
+    </div>
+    <div class="card" style="border-left:5px solid #8e44ad;">
+        <h4>🍬 Evite açúcar em excesso</h4>
+        <p>O açúcar alimenta as bactérias que causam cáries. Prefira frutas e reduza doces e refrigerantes.</p>
+    </div>
+    <div class="card" style="border-left:5px solid #e74c3c;">
+        <h4>🚭 Não fume</h4>
+        <p>O tabaco mancha os dentes, causa mau hálito, gengivite e aumenta o risco de câncer bucal.</p>
+    </div>
+    <div class="card" style="border-left:5px solid #2980b9;">
+        <h4>📅 Consulte seu dentista</h4>
+        <p>Visite o dentista a cada 6 meses. Problemas detectados cedo são mais fáceis de tratar.</p>
+    </div>
+
+</div>
+
+<!-- CURIOSIDADE -->
+<div class="card" style="background:#eaf4fb; border-left:5px solid #0f4c81;">
+    <h4>🔬 Você sabia?</h4>
+    <p>O esmalte dentário é o tecido mais duro do corpo humano — mais resistente que os ossos! Mesmo assim, ele não se regenera, por isso a prevenção é essencial.</p>
 </div>
 
 {% endblock %}

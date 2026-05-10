@@ -2,6 +2,9 @@
 
 {% block content %}
 
+<a href="/" style="display:inline-block; padding:7px 16px; background:#6c757d; color:white; border-radius:6px; text-decoration:none; margin-bottom:16px; font-size:14px;">← Painel</a>
+
+
 <h2>📊 Dashboard</h2>
 
 <!-- CARDS DE TOTAIS -->
@@ -47,17 +50,19 @@
 <!-- TABELA POR DENTISTA -->
 <div class="card">
     <h3>📋 Detalhamento por Dentista</h3>
-    <table id="tabela-dentistas">
+    <div style="overflow-x:auto;">
+    <table id="tabela-dentistas" style="width:100%; border-collapse:collapse; text-align:center;">
         <tr>
-            <th>Dentista</th>
+            <th style="text-align:left;">Dentista</th>
             <th>Especialidade</th>
             <th>Hoje</th>
             <th>Semana</th>
             <th>Mês</th>
             <th>Ano</th>
-            <th>Total</th>
+            <th>Total Geral</th>
         </tr>
     </table>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -105,14 +110,15 @@ fetch('/dashboard/dados')
     dados.por_dentista.forEach(d => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td>${d.dentista}</td>
-            <td>${d.especialidade || '—'}</td>
+            <td style="text-align:left; font-weight:bold;">${d.dentista}</td>
+            <td><span style="background:#eaf4fb; padding:3px 8px; border-radius:12px; font-size:13px;">${d.especialidade || '—'}</span></td>
             <td>${d.hoje}</td>
             <td>${d.semana}</td>
             <td>${d.mes}</td>
             <td>${d.ano}</td>
-            <td><strong>${d.total}</strong></td>
+            <td><strong style="color:#0f4c81;">${d.total}</strong></td>
         `;
+        tr.style.borderBottom = '1px solid #eee';
         tabela.appendChild(tr);
     });
 });

@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block content %}
+
+<a href="/minha_area" style="display:inline-block; padding:7px 16px; background:#6c757d; color:white; border-radius:6px; text-decoration:none; margin-bottom:16px; font-size:14px;">← Minha Área</a>
+
+<div class="card" style="max-width:750px;">
+<h2>🧠 Minha Anamnese</h2>
+<p style="color:#888;">Preencha com suas informações de saúde para ajudar seu dentista.</p>
+
+<form method="POST" action="/minha_area/salvar_anamnese">
+
+<h3 style="color:#0f4c81;">💊 Saúde Geral</h3>
+
+<label>Está em tratamento médico atualmente?</label>
+<select name="tratamento_medico">
+    <option value="">Selecione</option>
+    <option {% if anamnese and anamnese.tratamento_medico == 'Sim' %}selected{% endif %}>Sim</option>
+    <option {% if anamnese and anamnese.tratamento_medico == 'Não' %}selected{% endif %}>Não</option>
+</select>
+
+<label>Faz uso de medicamentos? Quais?</label>
+<textarea name="medicamentos" rows="2" placeholder="Liste os medicamentos em uso...">{{ anamnese.medicamentos if anamnese else '' }}</textarea>
+
+<label>Tem alguma alergia (medicamentos, látex, anestesia)?</label>
+<textarea name="alergias" rows="2" placeholder="Descreva as alergias...">{{ anamnese.alergias if anamnese else '' }}</textarea>
+
+<label>Possui alguma doença?</label>
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:8px 0;">
+    {% set doencas_lista = (anamnese.doencas if anamnese and anamnese.doencas else '').split(',') %}
+    {% for d in ['Diabetes','Hipertensão','Cardiopatia','Coagulopatia','HIV/AIDS','Hepatite','Epilepsia','Asma','Osteoporose','Câncer'] %}
+    <label style="display:flex; align-items:center; gap:6px; font-weight:normal;">
+        <input type="checkbox" name="doencas" value="{{ d }}" {% if d in doencas_lista %}checked{% endif %}> {{ d }}
+    </label>
+    {% endfor %}
+</div>
+<input name="doencas_outras" placeholder="Outras doenças..." value="{{ anamnese.doencas_outras if anamnese else '' }}">
+
+<h3 style="color:#0f4c81;">🦷 Saúde Bucal</h3>
+
+<label>Já fez tratamento dentário anteriormente?</label>
+<select name="tratamento_anterior">
+    <option value="">Selecione</option>
+    <option {% if anamnese and anamnese.tratamento_anterior == 'Sim' %}selected{% endif %}>Sim</option>
+    <option {% if anamnese and anamnese.tratamento_anterior == 'Não' %}selected{% endif %}>Não</option>
+</select>
+
+<label>Sente dor ou sensibilidade nos dentes?</label>
+<select name="sensibilidade">
+    <option value="">Selecione</option>
+    <option {% if anamnese and anamnese.sensibilidade == 'Sim' %}selected{% endif %}>Sim</option>
+    <option {% if anamnese and anamnese.sensibilidade == 'Não' %}selected{% endif %}>Não</option>
+</select>
+
+<label>Range ou aperta os dentes (bruxismo)?</label>
+<select name="bruxismo">
+    <option value="">Selecione</option>
+    <option {% if anamnese and anamnese.bruxismo == 'Sim' %}selected{% endif %}>Sim</option>
+    <option {% if anamnese and anamnese.bruxismo == 'Não' %}selected{% endif %}>Não</option>
+</select>
+
+<label>Sangra as gengivas ao escovar?</label>
+<select name="sangramento">
+    <option value="">Selecione</option>
+    <option {% if anamnese and anamnese.sangramento == 'Sim' %}selected{% endif %}>Sim</option>
+    <option {% if anamnese and anamnese.sangramento == 'Não' %}selected{% endif %}>Não</option>
+</select>
+
+<label>Usa prótese dentária?</label>
+<select name="protese">
+    <option value="">Selecione</option>
+    <option {% if anamnese and anamnese.protese == 'Sim' %}selected{% endif %}>Sim</option>
+    <option {% if anamnese and anamnese.protese == 'Não' %}selected{% endif %}>Não</option>
+</select>
+
+<h3 style="color:#0f4c81;">👶 Informações Complementares</h3>
+
+<label>Está grávida ou amamentando?</label>
+<select name="gravidez">
+    <option value="">Selecione</option>
+    <option {% if anamnese and anamnese.gravidez == 'Sim' %}selected{% endif %}>Sim</option>
+    <option {% if anamnese and anamnese.gravidez == 'Não' %}selected{% endif %}>Não</option>
+    <option {% if anamnese and anamnese.gravidez == 'Não se aplica' %}selected{% endif %}>Não se aplica</option>
+</select>
+
+<label>Fuma ou consome álcool regularmente?</label>
+<select name="habitos">
+    <option value="">Selecione</option>
+    <option {% if anamnese and anamnese.habitos == 'Fuma' %}selected{% endif %}>Fuma</option>
+    <option {% if anamnese and anamnese.habitos == 'Bebe' %}selected{% endif %}>Bebe</option>
+    <option {% if anamnese and anamnese.habitos == 'Ambos' %}selected{% endif %}>Ambos</option>
+    <option {% if anamnese and anamnese.habitos == 'Nenhum' %}selected{% endif %}>Nenhum</option>
+</select>
+
+<label>Observações adicionais</label>
+<textarea name="observacoes" rows="3" placeholder="Outras informações relevantes...">{{ anamnese.observacoes if anamnese else '' }}</textarea>
+
+<br><br>
+<button type="submit">💾 Salvar</button>
+
+</form>
+</div>
+{% endblock %}
