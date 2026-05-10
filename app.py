@@ -79,5 +79,15 @@ def init_db():
 
 init_db()
 
+@app.route('/setup/popular-dados-clinica-2026')
+def popular_dados_rota():
+    """Rota secreta para popular dados de teste - remover após uso"""
+    try:
+        from popular_dados import run_popular
+        result = run_popular()
+        return f'<pre>{result}</pre>'
+    except Exception as e:
+        return f'<pre>Erro: {e}</pre>'
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -6,7 +6,6 @@ Script para popular o banco com dados de teste:
 - Consultas de -60 a +30 dias
 """
 from db import get_db_connection, is_postgres
-from app import app, init_db
 from datetime import date, timedelta
 import random
 
@@ -19,27 +18,21 @@ especialidades = [
 ]
 
 dentistas_dados = [
-    # Endodontia
     ('Dr. Carlos Mendes',    'carlos.mendes@clinica.com',    'Endodontia',      'CRO-12345'),
     ('Dra. Ana Ferreira',    'ana.ferreira@clinica.com',     'Endodontia',      'CRO-12346'),
     ('Dr. Paulo Rocha',      'paulo.rocha@clinica.com',      'Endodontia',      'CRO-12347'),
-    # Cirurgia
     ('Dra. Mariana Costa',   'mariana.costa@clinica.com',    'Cirurgia',        'CRO-12348'),
     ('Dr. Felipe Lima',      'felipe.lima@clinica.com',      'Cirurgia',        'CRO-12349'),
     ('Dra. Juliana Alves',   'juliana.alves@clinica.com',    'Cirurgia',        'CRO-12350'),
-    # Dentística
     ('Dr. Roberto Silva',    'roberto.silva@clinica.com',    'Dentística',      'CRO-12351'),
     ('Dra. Patricia Souza',  'patricia.souza@clinica.com',   'Dentística',      'CRO-12352'),
     ('Dr. Lucas Oliveira',   'lucas.oliveira@clinica.com',   'Dentística',      'CRO-12353'),
-    # Periodontia
     ('Dra. Camila Santos',   'camila.santos@clinica.com',    'Periodontia',     'CRO-12354'),
     ('Dr. André Pereira',    'andre.pereira@clinica.com',    'Periodontia',     'CRO-12355'),
     ('Dra. Fernanda Lima',   'fernanda.lima@clinica.com',    'Periodontia',     'CRO-12356'),
-    # Odontopediatria
     ('Dra. Beatriz Ramos',   'beatriz.ramos@clinica.com',    'Odontopediatria', 'CRO-12357'),
     ('Dr. Gabriel Nunes',    'gabriel.nunes@clinica.com',    'Odontopediatria', 'CRO-12358'),
     ('Dra. Larissa Dias',    'larissa.dias@clinica.com',     'Odontopediatria', 'CRO-12359'),
-    # Próteses
     ('Dr. Marcelo Teixeira', 'marcelo.teixeira@clinica.com', 'Próteses',        'CRO-12360'),
     ('Dra. Renata Castro',   'renata.castro@clinica.com',    'Próteses',        'CRO-12361'),
     ('Dr. Thiago Barbosa',   'thiago.barbosa@clinica.com',   'Próteses',        'CRO-12362'),
@@ -112,11 +105,12 @@ status_passado = ['atendido', 'atendido', 'atendido', 'faltou', 'cancelado']
 horarios = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30',
             '13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00']
 
-with app.app_context():
+def run_popular():
+    log = []
     conn = get_db_connection()
     cur = conn.cursor()
 
-    print("Cadastrando dentistas...")
+    log.append("Cadastrando dentistas...")
     dentista_ids = []
     for nome, email, esp, cro in dentistas_dados:
         try:
@@ -130,21 +124,24 @@ with app.app_context():
             else:
                 dentista_ids.append((cur.lastrowid, esp))
         except Exception as e:
-            print(f"  Dentista {nome} já existe ou erro: {e}")
-            cur.execute(f"SELECT id, especialidade FROM usuarios WHERE email = {p()}", (email,))
+            cur.execute(f"SELECT id FROM usuarios WHERE email = {p()}", (email,))
             row = cur.fetchone()
             if row: dentista_ids.append((row[0], esp))
 
-    print("Cadastrando escalas...")
+    log.append(f"{len(dentista_ids)} dentistas processados")
+
+    log.append("Cadastrando escalas...")
     for did, esp in dentista_ids:
         dias = random.sample(dias_semana, 3)
         for dia in dias:
-            cur.execute(
-                f"INSERT INTO escala_dentistas (dentista_id, dia_semana, hora_inicio, hora_fim) VALUES ({p()},{p()},{p()},{p()})",
-                (did, dia, '08:00', '18:00')
-            )
+            try:
+                cur.execute(
+                    f"INSERT INTO escala_dentistas (dentista_id, dia_semana, hora_inicio, hora_fim) VALUES ({p()},{p()},{p()},{p()})",
+                    (did, dia, '08:00', '18:00')
+                )
+            except: pass
 
-    print("Cadastrando pacientes...")
+    log.append("Cadastrando pacientes...")
     paciente_ids = []
     for nome, nasc, sexo, cpf, tel, email in pacientes_dados:
         try:
@@ -158,51 +155,50 @@ with app.app_context():
             else:
                 paciente_ids.append(cur.lastrowid)
         except Exception as e:
-            print(f"  Paciente {nome} já existe ou erro: {e}")
             cur.execute(f"SELECT id FROM pacientes WHERE cpf = {p()}", (cpf,))
             row = cur.fetchone()
             if row: paciente_ids.append(row[0])
 
-    print("Cadastrando consultas...")
+    log.append(f"{len(paciente_ids)} pacientes processados")
+
+    log.append("Cadastrando consultas...")
     hoje = date.today()
     consultas_inseridas = 0
-    horarios_usados = {}  # (dentista_id, data, hora) -> True
+    horarios_usados = {}
 
     for delta in range(-60, 31):
         data = hoje + timedelta(days=delta)
-        dia_semana_num = data.weekday()
-        if dia_semana_num >= 5:  # pula fds
+        if data.weekday() >= 5:
             continue
-
-        n_consultas = random.randint(2, 6)
-        dents_do_dia = random.sample(dentista_ids, min(n_consultas, len(dentista_ids)))
-
-        for did, esp in dents_do_dia:
+        n = random.randint(2, 6)
+        dents_dia = random.sample(dentista_ids, min(n, len(dentista_ids)))
+        for did, esp in dents_dia:
             hora = random.choice(horarios)
             chave = (did, str(data), hora)
             if chave in horarios_usados:
                 continue
             horarios_usados[chave] = True
-
             pac_id = random.choice(paciente_ids)
             proc = random.choice(procedimentos[esp])
-
             if delta < 0:
                 status = random.choice(status_passado)
             elif delta == 0:
-                status = random.choice(['agendado', 'confirmado', 'atendido'])
+                status = random.choice(['agendado','confirmado','atendido'])
             else:
-                status = random.choice(['agendado', 'confirmado'])
-
-            cur.execute(
-                f"INSERT INTO consultas (paciente_id, dentista_id, data, hora, procedimento, status) VALUES ({p()},{p()},{p()},{p()},{p()},{p()})",
-                (pac_id, did, str(data), hora, proc, status)
-            )
-            consultas_inseridas += 1
+                status = random.choice(['agendado','confirmado'])
+            try:
+                cur.execute(
+                    f"INSERT INTO consultas (paciente_id, dentista_id, data, hora, procedimento, status) VALUES ({p()},{p()},{p()},{p()},{p()},{p()})",
+                    (pac_id, did, str(data), hora, proc, status)
+                )
+                consultas_inseridas += 1
+            except: pass
 
     conn.commit()
     conn.close()
-    print(f"\n✅ Concluído!")
-    print(f"   18 dentistas cadastrados")
-    print(f"   {len(paciente_ids)} pacientes cadastrados")
-    print(f"   {consultas_inseridas} consultas inseridas (-60 a +30 dias)")
+    log.append(f"{consultas_inseridas} consultas inseridas")
+    log.append("\n✅ Concluído com sucesso!")
+    return "\n".join(log)
+
+if __name__ == '__main__':
+    print(run_popular())
