@@ -29,8 +29,8 @@
 {% for p in pacientes %}
 <tr>
     <td><a href="/pacientes/ficha/{{ p.id }}" style="color:#0f4c81; font-weight:bold; text-decoration:none;">{{ p.nome }}</a></td>
-    <td>{{ p.cpf or '—' }}</td>
-    <td>{{ p.telefone or '—' }}</td>
+    <td>{{ p.cpf | mascarar_cpf }}</td>
+    <td>{{ p.telefone | mascarar_telefone }}</td>
     <td>{{ p.cidade or '—' }}</td>
     <td>
         <a href="/pacientes/ficha/{{ p.id }}" title="Ficha">📋</a>

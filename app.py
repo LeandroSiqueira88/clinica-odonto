@@ -10,6 +10,38 @@ from routes.perfil import perfil
 app = Flask(__name__)
 app.secret_key = 'segredo_super'
 
+# Filtro para mascarar dados sensíveis
+@app.template_filter('mascarar_cpf')
+def mascarar_cpf(valor):
+    if not valor: return '—'
+    v = str(valor).replace('.','').replace('-','')
+    return f'***.{v[3:6]}.***-**' if len(v) >= 9 else '***'
+
+@app.template_filter('mascarar_telefone')
+def mascarar_telefone(valor):
+    if not valor: return '—'
+    v = str(valor)
+    if len(v) >= 4:
+        return v[:3] + ' *****-' + v[-2:]
+    return '****'
+
+@app.template_filter('mascarar_email')
+def mascarar_email(valor):
+    if not valor: return '—'
+    partes = str(valor).split('@')
+    if len(partes) == 2:
+        usuario = partes[0]
+        return usuario[0] + '****@' + partes[1]
+    return '****'
+
+@app.template_filter('mascarar_nome')
+def mascarar_nome(valor):
+    if not valor: return '—'
+    partes = str(valor).split()
+    if len(partes) >= 2:
+        return partes[0] + ' ' + ' '.join('*' * len(p) for p in partes[1:])
+    return valor
+
 # Filtro para formatar datas no formato DD/MM/AAAA
 @app.template_filter('formatar_data')
 def formatar_data(valor):

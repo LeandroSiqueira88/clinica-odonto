@@ -64,7 +64,12 @@
     <td>{{ e.hora_inicio }}</td>
     <td>{{ e.hora_fim }}</td>
     <td>
-        {% if pode_editar %}<a href="/escala/editar/{{ e.id }}">✏️ Editar</a>{% else %}—{% endif %}
+        {% if pode_editar %}
+        <a href="/escala/editar/{{ e.id }}" title="Editar">✏️</a>
+        <a href="/escala/excluir/{{ e.id }}"
+           onclick="return confirm('Excluir esta escala?')"
+           title="Excluir" style="color:#e74c3c; margin-left:8px;">🗑️</a>
+        {% else %}—{% endif %}
     </td>
 </tr>
 {% endfor %}

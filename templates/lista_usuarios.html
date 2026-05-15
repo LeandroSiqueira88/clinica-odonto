@@ -26,7 +26,7 @@
     <tr>
         <td>{{ u.id }}</td>
         <td>{{ u.nome }}</td>
-        <td>{{ u.email }}</td>
+        <td>{{ u.email | mascarar_email }}</td>
         <td>{{ u.tipo }}</td>
         <td>
             <a href="/usuarios/excluir/{{ u.id }}" 

@@ -14,7 +14,7 @@
         <div style="font-weight:bold; font-size:16px;">{{ consulta.paciente }}</div>
         {% if consulta.telefone_paciente %}
         <div style="margin-top:6px;">
-            📞 <a href="tel:{{ consulta.telefone_paciente }}" style="color:#0f4c81;">{{ consulta.telefone_paciente }}</a>
+            📞 <a href="tel:{{ consulta.telefone_paciente }}" style="color:#0f4c81;">{{ consulta.telefone_paciente | mascarar_telefone }}</a>
         </div>
         {% endif %}
         <div style="margin-top:6px;">

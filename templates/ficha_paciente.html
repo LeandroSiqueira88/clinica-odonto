@@ -26,9 +26,9 @@
         <div><b>Nome:</b><br>{{ paciente.nome }}</div>
         <div><b>Data de Nascimento:</b><br>{{ paciente.data_nascimento | formatar_data if paciente.data_nascimento else '—' }}</div>
         <div><b>Sexo:</b><br>{{ 'Masculino' if paciente.sexo == 'M' else 'Feminino' if paciente.sexo == 'F' else '—' }}</div>
-        <div><b>CPF:</b><br>{{ paciente.cpf or '—' }}</div>
-        <div><b>Telefone:</b><br>{{ paciente.telefone or '—' }}</div>
-        <div><b>Email:</b><br>{{ paciente.email or '—' }}</div>
+        <div><b>CPF:</b><br>{{ paciente.cpf | mascarar_cpf }}</div>
+        <div><b>Telefone:</b><br>{{ paciente.telefone | mascarar_telefone }}</div>
+        <div><b>Email:</b><br>{{ paciente.email | mascarar_email }}</div>
         {% if paciente.responsavel_nome %}
         <div><b>Responsável:</b><br>{{ paciente.responsavel_nome }}</div>
         {% endif %}

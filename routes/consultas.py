@@ -136,6 +136,17 @@ def salvar_escala():
     flash('Escala cadastrada!')
     return redirect('/escala')
 
+@consultas.route('/escala/excluir/<int:id>')
+@tipo_required(['master', 'admin', 'operador'])
+def excluir_escala(id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute(f'DELETE FROM escala_dentistas WHERE id = {p()}', (id,))
+    conn.commit()
+    conn.close()
+    flash('Escala excluída!')
+    return redirect('/escala')
+
 @consultas.route('/escala/editar/<int:id>')
 @tipo_required(['master', 'admin', 'operador'])
 def editar_escala(id):
